@@ -1,15 +1,17 @@
 // Cliente Supabase do painel. Usa apenas a chave PÚBLICA (anon/publishable):
 // todo acesso a dados é autorizado pelo Postgres (RLS) com base no usuário logado.
 import { createClient } from '@supabase/supabase-js';
+import { criarClienteDemo } from '../demo/cliente-demo.js';
 
 const url = import.meta.env.VITE_SUPABASE_URL;
 const chave = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const configurado = !!(url && chave);
+export const configurado = __DEMO__ || !!(url && chave);
 export const BUCKET = 'fotos-cadastros';
 
 // Sessão guardada no sessionStorage: fechar o navegador encerra o acesso.
-export const sb = configurado
+// Na prévia de demonstração (GitHub Pages) usa dados fictícios no navegador.
+export const sb = __DEMO__ ? criarClienteDemo() : (url && chave)
   ? createClient(url, chave, {
     auth: {
       storage: window.sessionStorage,

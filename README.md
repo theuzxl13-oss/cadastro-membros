@@ -15,6 +15,17 @@ Substitui a ficha de papel (*Ficha de Cadastro Setorial*) por um formulário dig
 
 ---
 
+## Prévia de demonstração (GitHub Pages)
+
+Para visualizar o sistema **antes** de configurar Supabase e Cloudflare existe um modo demonstração:
+
+- Endereço: **https://theuzxl13-oss.github.io/cadastro-membros/** (formulário) e **…/cadastro-membros/admin/** (painel).
+- Login do painel: botões *Entrar como Administrador* / *Entrar como Secretaria* (senha `demo1234`).
+- Usa **dados fictícios** salvos apenas no navegador de quem visualiza (faixa amarela no topo; botão *Restaurar dados de exemplo*). Nada é enviado a lugar nenhum. Uma ficha enviada pelo formulário aparece no painel **do mesmo navegador**.
+- Publicado automaticamente pelo workflow `.github/workflows/demo-pages.yml` a cada push. Para gerar localmente: `npm run build:demo` (saída em `dist-demo/`).
+- O código da demonstração fica em `src/demo/` e é **removido do build de produção** (`npm run build`) pela constante de compilação `__DEMO__`.
+- **Não use a demonstração com dados reais.**
+
 ## Sumário
 1. [Arquitetura e segurança](#1-arquitetura-e-segurança)
 2. [Estrutura do projeto](#2-estrutura-do-projeto)

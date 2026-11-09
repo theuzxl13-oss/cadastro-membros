@@ -1,3 +1,4 @@
+import { caminho } from '../../ui/caminho.js';
 import QRCode from 'qrcode';
 import { jsPDF } from 'jspdf';
 import {
@@ -5,7 +6,7 @@ import {
 } from '../util.js';
 import { imprimirCartazQR } from '../impressao.js';
 
-const LOGO = '/img/logo-setor46.jpg';
+const LOGO = caminho('img/logo-setor46.jpg');
 
 function carregarImagem(src) {
   return new Promise((res, rej) => {
@@ -70,7 +71,7 @@ export async function viewQRCode({ sb, view, atual }) {
   carregandoEm(view);
   const { data } = await sb.from('configuracoes').select('url_publica').eq('id', 1).maybeSingle();
   if (!atual()) return;
-  const url = data?.url_publica || `${location.origin}/`;
+  const url = data?.url_publica || `${location.origin}${caminho()}`;
   const canvas = el('canvas', { 'aria-label': `QR Code para ${url}` });
   await QRCode.toCanvas(canvas, url, { width: 600, margin: 2, errorCorrectionLevel: 'H' });
   const nomeBase = 'qrcode-ficha-setor46';

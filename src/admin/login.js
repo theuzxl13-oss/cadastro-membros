@@ -1,7 +1,10 @@
+import { caminho } from '../ui/caminho.js';
 import '../styles/base.css';
 import '../styles/admin.css';
 import { sb, configurado, adminAtual, mensagemErro } from './supabase.js';
 import { ligarVerSenha } from './senha.js';
+
+if (__DEMO__) import('../demo/faixa-demo.js').then((m) => m.ativarFaixaDemo());
 
 const $ = (s) => document.querySelector(s);
 const aviso = $('#aviso');
@@ -28,7 +31,7 @@ if (!configurado) {
   $('#form-login').hidden = true;
 } else {
   // Já logado como administrador? Vai direto ao painel.
-  adminAtual().then((a) => { if (a) location.replace('/admin/painel.html'); });
+  adminAtual().then((a) => { if (a) location.replace(caminho('admin/painel.html')); });
 }
 
 $('#form-login').addEventListener('submit', async (e) => {
@@ -49,7 +52,7 @@ $('#form-login').addEventListener('submit', async (e) => {
       return;
     }
     await sb.rpc('admin_registrar_acao', { p_acao: 'login' });
-    location.replace('/admin/painel.html');
+    location.replace(caminho('admin/painel.html'));
   } catch (err) {
     // pequena espera para dificultar tentativas em sequência
     await new Promise((r) => setTimeout(r, 800));
@@ -81,7 +84,7 @@ $('#form-recuperar').addEventListener('submit', async (e) => {
   btn.disabled = true;
   try {
     const { error } = await sb.auth.resetPasswordForEmail(email, {
-      redirectTo: `${location.origin}/admin/redefinir-senha.html`,
+      redirectTo: `${location.origin}${caminho('admin/redefinir-senha.html')}`,
     });
     if (error && /rate limit|too many/i.test(error.message)) throw error;
     // Mensagem neutra: não revela se o e-mail existe

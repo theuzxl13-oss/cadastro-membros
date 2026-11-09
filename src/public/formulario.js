@@ -7,6 +7,9 @@ import {
   el, criarCampo, lerValores, aplicarRegras, mostrarErros,
 } from '../ui/campos-dom.js';
 import { criarRecorte } from '../ui/foto3x4.js';
+import { obterConfig, enviarFicha } from './api.js';
+
+if (__DEMO__) import('../demo/faixa-demo.js').then((m) => m.ativarFaixaDemo());
 
 const $ = (s) => document.querySelector(s);
 const form = $('#ficha');
@@ -24,10 +27,7 @@ const inicio = Date.now();
 // ---------------------------------------------------------------------------
 async function iniciar() {
   try {
-    const r = await fetch('/api/form-config', { headers: { Accept: 'application/json' } });
-    const j = await r.json().catch(() => null);
-    if (!r.ok || !j?.ok) throw new Error(j?.erro || 'Não foi possível carregar o formulário.');
-    config = j;
+    config = await obterConfig();
   } catch (e) {
     $('#estado-carregando').hidden = true;
     const box = $('#estado-erro');
@@ -316,9 +316,8 @@ form.addEventListener('submit', async (ev) => {
     fd.append('website', $('#website').value);
     if (token) fd.append('cf-turnstile-response', token);
 
-    const r = await fetch('/api/submit', { method: 'POST', body: fd });
-    const j = await r.json().catch(() => ({}));
-    if (!r.ok || !j.ok) {
+    const { status, json: j } = await enviarFicha(fd);
+    if (status >= 300 || !j.ok) {
       if (j.erros && Object.keys(j.erros).length) {
         const nomes = Object.keys(j.erros);
         if (nomes.includes('foto')) { mostrarEtapa(5); $('#foto-erro').textContent = j.erros.foto; $('#foto-erro').hidden = false; }

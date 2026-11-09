@@ -10,7 +10,8 @@
     "test:unit": "node --test tests/unit/*.test.mjs",
     "test:e2e": "playwright test --trace off",
     "db:local": "supabase start && supabase db reset",
-    "criar-admin": "node scripts/criar-admin.mjs"
+    "criar-admin": "node scripts/criar-admin.mjs",
+    "build:demo": "vite build --mode demo --base /cadastro-membros/"
   },
   "repository": {
     "type": "git",

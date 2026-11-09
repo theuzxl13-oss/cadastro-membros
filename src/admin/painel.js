@@ -1,3 +1,4 @@
+import { caminho } from '../ui/caminho.js';
 import '../styles/base.css';
 import '../styles/admin.css';
 import '../styles/impressao.css';
@@ -10,6 +11,8 @@ import { viewCongregacoes } from './views/congregacoes.js';
 import { viewQRCode } from './views/qrcode.js';
 import { viewExportacao } from './views/exportacao.js';
 import { viewConfiguracoes } from './views/configuracoes.js';
+
+if (__DEMO__) import('../demo/faixa-demo.js').then((m) => m.ativarFaixaDemo());
 
 const INATIVIDADE_MS = 30 * 60 * 1000;
 const $ = (s) => document.querySelector(s);
@@ -35,7 +38,7 @@ async function sair(motivo = 'saiu') {
   } catch { /* segue com o logout */ }
   await sb.auth.signOut().catch(() => {});
   sessionStorage.clear();
-  location.replace(`/admin/?motivo=${motivo}`);
+  location.replace(caminho(`admin/?motivo=${motivo}`));
 }
 
 function lerRota() {
@@ -112,11 +115,11 @@ async function iniciar() {
   admin = await adminAtual();
   if (!admin) {
     const { data: { session } } = await sb.auth.getSession();
-    if (session) { await sb.auth.signOut(); location.replace('/admin/?motivo=sem-permissao'); } else location.replace('/admin/');
+    if (session) { await sb.auth.signOut(); location.replace(caminho('admin/?motivo=sem-permissao')); } else location.replace(caminho('admin/'));
     return;
   }
   sb.auth.onAuthStateChange((evento) => {
-    if (evento === 'SIGNED_OUT') location.replace('/admin/?motivo=sessao-expirada');
+    if (evento === 'SIGNED_OUT') location.replace(caminho('admin/?motivo=sessao-expirada'));
   });
   $('#usuario').replaceChildren(
     el('strong', { text: admin.nome }),

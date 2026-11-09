@@ -1,3 +1,4 @@
+import { caminho } from '../ui/caminho.js';
 // Impressão: ficha individual A4 (fiel ao layout da ficha em papel) e cartaz do QR Code.
 import { el, dataHora } from './util.js';
 import {
@@ -5,7 +6,7 @@ import {
 } from '../shared/campos.js';
 import { sb } from './supabase.js';
 
-const LOGO = '/img/logo-setor46.jpg';
+const LOGO = caminho('img/logo-setor46.jpg');
 
 async function carregarImagens(raiz) {
   const imgs = [...raiz.querySelectorAll('img')];

@@ -1,7 +1,10 @@
+import { caminho } from '../ui/caminho.js';
 import '../styles/base.css';
 import '../styles/admin.css';
 import { sb, configurado, mensagemErro } from './supabase.js';
 import { ligarVerSenha, senhaForte } from './senha.js';
+
+if (__DEMO__) import('../demo/faixa-demo.js').then((m) => m.ativarFaixaDemo());
 
 const $ = (s) => document.querySelector(s);
 const aviso = $('#aviso');
@@ -57,7 +60,7 @@ $('#form-nova').addEventListener('submit', async (e) => {
     const { error } = await sb.auth.updateUser({ password: s1 });
     if (error) throw error;
     await sb.auth.signOut();
-    location.replace('/admin/?motivo=senha-alterada');
+    location.replace(caminho('admin/?motivo=senha-alterada'));
   } catch (err) {
     mostrar(mensagemErro(err));
     btn.disabled = false;

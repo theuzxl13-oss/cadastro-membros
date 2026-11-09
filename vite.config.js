@@ -9,9 +9,12 @@ const paginas = {
   painel: 'admin/painel.html',
 };
 
-export default defineConfig({
+// `npm run build:demo` gera a prévia estática (GitHub Pages) com dados fictícios.
+// Em produção __DEMO__ é false e todo o código de demonstração é removido.
+export default defineConfig(({ mode }) => ({
+  define: { __DEMO__: JSON.stringify(mode === 'demo') },
   build: {
-    outDir: 'dist',
+    outDir: mode === 'demo' ? 'dist-demo' : 'dist',
     emptyOutDir: true,
     sourcemap: false,
     rollupOptions: {
@@ -23,4 +26,4 @@ export default defineConfig({
     },
   },
   server: { port: 5173 },
-});
+}));
