@@ -39,6 +39,19 @@ Para visualizar o sistema **antes** de configurar Supabase e Cloudflare existe u
 
 ---
 
+## Segurança e LGPD — documentação
+
+| Documento | Conteúdo |
+|---|---|
+| [docs/RELATORIO-AUDITORIA-SEGURANCA.md](docs/RELATORIO-AUDITORIA-SEGURANCA.md) | Auditoria completa: vulnerabilidades, evidências, correções, pendências, checklist |
+| [privacidade.html](privacidade.html) | Política de Privacidade pública (`/privacidade`) |
+| [docs/lgpd/QUESTIONARIO-LGPD.md](docs/lgpd/QUESTIONARIO-LGPD.md) | Questionário para a instituição (itens PENDENTES DE DEFINIÇÃO) |
+| [docs/lgpd/BASE-LEGAL-E-CONSENTIMENTO.md](docs/lgpd/BASE-LEGAL-E-CONSENTIMENTO.md) | Base legal por finalidade e termo de consentimento |
+| [docs/lgpd/PROCEDIMENTO-DIREITOS-TITULARES.md](docs/lgpd/PROCEDIMENTO-DIREITOS-TITULARES.md) | Como atender pedidos de acesso, correção e exclusão |
+| [docs/lgpd/PLANO-RESPOSTA-INCIDENTES.md](docs/lgpd/PLANO-RESPOSTA-INCIDENTES.md) | Resposta a incidentes (Res. CD/ANPD 15/2024) |
+| [docs/lgpd/REGISTRO-OPERACOES-TRATAMENTO.md](docs/lgpd/REGISTRO-OPERACOES-TRATAMENTO.md) | Registro das operações (art. 37) |
+| [docs/sql/](docs/sql/) | Propostas de alteração no banco (só aplicar com autorização) |
+
 ## 1. Arquitetura e segurança
 
 ```
