@@ -24,7 +24,26 @@ async function sha256(texto) {
   return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-async function verificarTurnstile(env, token, ip) {
+// Lê o corpo com limite real de bytes (não confia no cabeçalho Content-Length)
+async function lerCorpoLimitado(request, limite) {
+  if (!request.body) return new Uint8Array();
+  const leitor = request.body.getReader();
+  const partes = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await leitor.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > limite) { await leitor.cancel(); return null; }
+    partes.push(value);
+  }
+  const saida = new Uint8Array(total);
+  let pos = 0;
+  for (const p of partes) { saida.set(p, pos); pos += p.byteLength; }
+  return saida;
+}
+
+async function verificarTurnstile(env, token, ip, hostEsperado) {
   const form = new FormData();
   form.append('secret', env.TURNSTILE_SECRET_KEY);
   form.append('response', token);
@@ -32,7 +51,8 @@ async function verificarTurnstile(env, token, ip) {
   const resp = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body: form });
   if (!resp.ok) return false;
   const r = await resp.json();
-  return r.success === true;
+  // O token precisa ter sido emitido para ESTE site (evita reaproveitar tokens de outro domínio)
+  return r.success === true && (!hostEsperado || r.hostname === hostEsperado);
 }
 
 export async function onRequestPost({ request, env }) {
@@ -51,13 +71,15 @@ export async function onRequestPost({ request, env }) {
   try {
     cfg = configSupabase(env);
   } catch (e) {
-    console.error(e);
+    console.error(e?.message);
     return erro(503, 'Sistema ainda não configurado. Procure a secretaria.');
   }
 
   let form;
   try {
-    form = await request.formData();
+    const corpo = await lerCorpoLimitado(request, MAX_REQUISICAO);
+    if (corpo === null) return erro(413, 'Envio muito grande. A foto deve ter no máximo 3 MB.');
+    form = await new Response(corpo, { headers: { 'Content-Type': tipo } }).formData();
   } catch {
     return erro(400, 'Não foi possível ler o envio.');
   }
@@ -76,7 +98,7 @@ export async function onRequestPost({ request, env }) {
     const token = String(form.get('cf-turnstile-response') || '');
     if (!token) return erro(400, 'Confirme a verificação de segurança antes de enviar.');
     let okTs = false;
-    try { okTs = await verificarTurnstile(env, token, ip); } catch (e) { console.error('turnstile', e); }
+    try { okTs = await verificarTurnstile(env, token, ip, url.hostname); } catch (e) { console.error('turnstile', e?.message); }
     if (!okTs) return erro(400, 'A verificação de segurança falhou. Atualize a verificação e envie novamente.');
   }
 
@@ -130,6 +152,9 @@ export async function onRequestPost({ request, env }) {
       throw e;
     }
     const proporcao = imagem.largura / imagem.altura;
+    if (imagem.largura > 2400 || imagem.altura > 3200) {
+      return erro(400, 'A foto tem resolução excessiva.', { erros: { foto: 'Resolução muito alta.' } });
+    }
     if (imagem.largura < 150 || imagem.altura < 200 || proporcao < 0.7 || proporcao > 0.8) {
       return erro(400, 'A foto precisa estar no formato 3x4 (retrato).', { erros: { foto: 'Formato 3x4 obrigatório.' } });
     }
@@ -166,13 +191,13 @@ export async function onRequestPost({ request, env }) {
       });
       linha = r?.[0];
     } catch (e) {
-      await removerArquivo(cfg, BUCKET, caminho).catch((x) => console.error('rollback foto', x));
+      await removerArquivo(cfg, BUCKET, caminho).catch((x) => console.error('rollback foto', x?.message));
       throw e;
     }
 
     return json({ ok: true, protocolo: linha?.protocolo }, 201);
   } catch (e) {
-    console.error('submit', e);
+    console.error('submit', e?.message); // mensagem já sanitizada (sem dados pessoais)
     if (e instanceof ErroConfig) return erro(503, 'Sistema ainda não configurado.');
     return erro(500, 'Não foi possível registrar a ficha agora. Tente novamente em alguns minutos.');
   }

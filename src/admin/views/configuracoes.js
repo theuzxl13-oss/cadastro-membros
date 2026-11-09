@@ -3,6 +3,7 @@ import {
 } from '../util.js';
 import { mensagemErro } from '../supabase.js';
 import { ligarVerSenha, senhaForte } from '../senha.js';
+import { criarVerificacao } from '../../ui/turnstile.js';
 
 const ACOES = {
   cadastro_recebido: 'Ficha recebida',
@@ -80,15 +81,20 @@ export async function viewConfiguracoes(ctx) {
     campo('pw-atual', 'Senha atual', el('div', { class: 'senha-wrap' }, sAtual, el('button', { type: 'button', class: 'btn sec peq ver-senha', 'data-alvo': 'pw-atual', text: 'Mostrar' }))),
     campo('pw-nova', 'Nova senha', el('div', { class: 'senha-wrap' }, sNova, el('button', { type: 'button', class: 'btn sec peq ver-senha', 'data-alvo': 'pw-nova', text: 'Mostrar' })), 'Mínimo de 10 caracteres, com letras e números.'),
     campo('pw-conf', 'Repita a nova senha', sConf),
+    el('div', { id: 'ts-senha', class: 'turnstile' }),
     el('button', { type: 'submit', class: 'btn', text: 'Alterar senha' }));
+  let tsSenha = { ativo: false, token: () => '', reset: () => {} };
   formSenha.addEventListener('submit', async (e) => {
     e.preventDefault();
     const fraca = senhaForte(sNova.value);
     if (fraca) { toast(fraca, 'erro'); return; }
     if (sNova.value !== sConf.value) { toast('As senhas não conferem.', 'erro'); return; }
     // Confirma a senha atual antes de alterar
-    const { error: e1 } = await sb.auth.signInWithPassword({ email: admin.email, password: sAtual.value });
-    if (e1) { toast('Senha atual incorreta.', 'erro'); return; }
+    const captchaToken = tsSenha.token();
+    if (tsSenha.ativo && !captchaToken) { toast('Conclua a verificação de segurança.', 'erro'); return; }
+    const { error: e1 } = await sb.auth.signInWithPassword({ email: admin.email, password: sAtual.value, options: captchaToken ? { captchaToken } : undefined });
+    tsSenha.reset();
+    if (e1) { toast(/captcha/i.test(e1.message) ? 'Refaça a verificação de segurança.' : 'Senha atual incorreta.', 'erro'); return; }
     const { error: e2 } = await sb.auth.updateUser({ password: sNova.value });
     if (e2) { toast(mensagemErro(e2), 'erro'); return; }
     formSenha.reset();
@@ -130,4 +136,5 @@ export async function viewConfiguracoes(ctx) {
     el('div', { class: 'grade-config' }, formCfg, el('div', { style: 'display:flex;flex-direction:column;gap:16px' }, formSenha, cardSessao), cardAdmins, cardAud),
   );
   ligarVerSenha(view);
+  criarVerificacao(view.querySelector('#ts-senha')).then((v) => { tsSenha = v; }).catch(() => {});
 }

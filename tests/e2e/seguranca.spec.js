@@ -182,3 +182,95 @@ test.describe('RLS e Storage', () => {
     }
   });
 });
+
+// ---------------------------------------------------------------------------
+// Testes adicionados na auditoria de segurança
+// ---------------------------------------------------------------------------
+test.describe('Auditoria: upload e entrada de dados', () => {
+  test('corpo gigante sem Content-Length (chunked) é recusado com 413', async () => {
+    const lixo = new Uint8Array(6 * 1024 * 1024);
+    const stream = new ReadableStream({
+      start(c) { for (let i = 0; i < lixo.length; i += 65536) c.enqueue(lixo.subarray(i, i + 65536)); c.close(); },
+    });
+    const r = await fetch(`${BASE}/api/submit`, {
+      method: 'POST', body: stream, duplex: 'half', headers: { 'Content-Type': 'multipart/form-data; boundary=x' },
+    });
+    expect(r.status).toBe(413);
+  });
+
+  test('JPEG "poliglota" (HTML/ZIP anexado) é gravado sem o conteúdo extra', async () => {
+    const r = await enviarFicha(DADOS_VALIDOS(congregacaoId, { nome: 'Auditoria Poliglota' }), { foto: foto('foto-poliglota.jpg') });
+    expect(r.status).toBe(201);
+    const c = await cadastroPorProtocolo(r.json.protocolo);
+    const bytes = await baixarFotoServico(c.foto_path);
+    expect(bytes.includes('<script>')).toBe(false);
+    expect(bytes.includes('MALICIOSO')).toBe(false);
+    expect(bytes.subarray(-2)).toEqual(Buffer.from([0xff, 0xd9]));
+    await fetch('http://127.0.0.1:54321/storage/v1/object/fotos-cadastros', { method: 'DELETE', headers: { apikey: SECRET, 'Content-Type': 'application/json' }, body: JSON.stringify({ prefixes: [c.foto_path] }) });
+    await svc(`/rest/v1/cadastros?id=eq.${c.id}`, { method: 'DELETE' });
+  });
+
+  test('imagem com resolução excessiva (bomba de descompressão) é recusada', async () => {
+    const r = await enviarFicha(DADOS_VALIDOS(congregacaoId), { foto: foto('foto-gigante.jpg') });
+    expect(r.status).toBe(400);
+  });
+
+  test('texto que o JavaScript aceita mas o banco recusaria (emojis) é barrado na validação, sem erro 500', async () => {
+    const r = await enviarFicha(DADOS_VALIDOS(congregacaoId, { nome: '😀😀' }));
+    expect(r.status).toBe(422);
+    expect(r.json.erros.nome).toBeTruthy();
+  });
+
+  test('respostas da API não liberam CORS para outros sites', async () => {
+    const r = await fetch(`${BASE}/api/form-config`, { headers: { Origin: 'https://evil.example' } });
+    expect(r.headers.get('access-control-allow-origin')).not.toBe('*');
+  });
+});
+
+test.describe('Auditoria: escalada de privilégio e integridade', () => {
+  test('secretaria não altera configurações nem o próprio papel', async () => {
+    const t = await login(SECRETARIA);
+    const cfg = await comoUsuario(t, '/rest/v1/configuracoes?id=eq.1', { method: 'PATCH', body: { formulario_aberto: false }, headers: { Prefer: 'return=representation' } });
+    expect(await cfg.json()).toEqual([]);
+    const papel = await comoUsuario(t, `/rest/v1/admins?email=eq.${SECRETARIA.email}`, { method: 'PATCH', body: { papel: 'admin' } });
+    expect(papel.status).toBeGreaterThanOrEqual(400);
+    const aud = await comoUsuario(t, '/rest/v1/auditoria?select=id');
+    expect(await aud.json()).toEqual([]);
+  });
+
+  test('nem o administrador cria outro administrador, apaga ou altera a auditoria, ou lê o controle de IPs', async () => {
+    const t = await login(ADMIN);
+    const ins = await comoUsuario(t, '/rest/v1/admins', { method: 'POST', body: { user_id: '00000000-0000-0000-0000-000000000000', email: 'x@x.x', nome: 'Invasor' } });
+    expect(ins.status).toBeGreaterThanOrEqual(400);
+    const promo = await comoUsuario(t, '/rest/v1/rpc/promover_admin', { method: 'POST', body: { p_email: COMUM.email, p_nome: 'X', p_papel: 'admin' } });
+    expect(promo.status).toBeGreaterThanOrEqual(400);
+    const delAud = await comoUsuario(t, '/rest/v1/auditoria?id=gt.0', { method: 'DELETE' });
+    expect(delAud.status).toBeGreaterThanOrEqual(400);
+    const updAud = await comoUsuario(t, '/rest/v1/auditoria?id=gt.0', { method: 'PATCH', body: { acao: 'apagado' } });
+    expect(updAud.status).toBeGreaterThanOrEqual(400);
+    const ips = await comoUsuario(t, '/rest/v1/envios_controle?select=*');
+    expect(ips.status).toBeGreaterThanOrEqual(400);
+    const regAcao = await comoUsuario(t, '/rest/v1/rpc/admin_registrar_acao', { method: 'POST', body: { p_acao: 'cadastro_excluido' } });
+    expect(regAcao.status).toBeGreaterThanOrEqual(400); // não forja eventos de exclusão
+  });
+
+  test('injeção SQL em filtros da API é tratada como texto', async () => {
+    const t = await login(ADMIN);
+    const r = await comoUsuario(t, `/rest/v1/cadastros?select=id&nome_busca=ilike.${encodeURIComponent("%' or 1=1 --%")}`);
+    expect(r.status).toBe(200);
+    expect(await r.json()).toEqual([]);
+  });
+
+  test('logout revoga o refresh token (sessão não pode ser reaproveitada)', async () => {
+    const r = await fetch('http://127.0.0.1:54321/auth/v1/token?grant_type=password', {
+      method: 'POST', headers: { apikey: (await import('./apoio.js')).PUB, 'Content-Type': 'application/json' }, body: JSON.stringify({ email: ADMIN.email, password: ADMIN.senha }),
+    });
+    const s = await r.json();
+    const out = await fetch('http://127.0.0.1:54321/auth/v1/logout?scope=global', { method: 'POST', headers: { apikey: (await import('./apoio.js')).PUB, Authorization: `Bearer ${s.access_token}` } });
+    expect(out.status).toBe(204);
+    const reuso = await fetch('http://127.0.0.1:54321/auth/v1/token?grant_type=refresh_token', {
+      method: 'POST', headers: { apikey: (await import('./apoio.js')).PUB, 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh_token: s.refresh_token }),
+    });
+    expect(reuso.status).toBeGreaterThanOrEqual(400);
+  });
+});

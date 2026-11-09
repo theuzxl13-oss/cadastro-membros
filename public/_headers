@@ -1,6 +1,6 @@
 # Cabeçalhos de segurança do Cloudflare Pages
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://viacep.com.br http://127.0.0.1:54321; frame-src https://challenges.cloudflare.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' __SUPABASE_ORIGEM__ https://viacep.com.br; frame-src https://challenges.cloudflare.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
@@ -11,11 +11,13 @@
 /admin/*
   X-Robots-Tag: noindex, nofollow, noarchive
   Cache-Control: no-store
+  ! Referrer-Policy
   Referrer-Policy: no-referrer
 
 /api/*
   X-Robots-Tag: noindex
   Cache-Control: no-store
+  ! Access-Control-Allow-Origin
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable

@@ -40,6 +40,7 @@ export function mensagemErro(e) {
   const m = String(e?.message || e || '');
   if (/Invalid login credentials/i.test(m)) return 'E-mail ou senha incorretos.';
   if (/Email not confirmed/i.test(m)) return 'E-mail ainda não confirmado.';
+  if (/captcha/i.test(m)) return 'A verificação de segurança falhou ou expirou. Refaça a verificação e tente novamente.';
   if (/rate limit|too many/i.test(m)) return 'Muitas tentativas. Aguarde alguns minutos e tente novamente.';
   if (/Failed to fetch|NetworkError/i.test(m)) return 'Sem conexão com o servidor. Verifique a internet.';
   if (/JWT expired|invalid JWT|session/i.test(m)) return 'Sua sessão expirou. Entre novamente.';

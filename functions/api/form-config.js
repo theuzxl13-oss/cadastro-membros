@@ -25,7 +25,7 @@ export async function onRequestGet({ env }) {
       turnstile_site_key: turnstileAtivo ? env.TURNSTILE_SITE_KEY : null,
     });
   } catch (e) {
-    console.error('form-config', e);
+    console.error('form-config', e?.message);
     if (e instanceof ErroConfig) return erro(503, 'Sistema ainda não configurado. Procure a secretaria.');
     return erro(502, 'Não foi possível carregar o formulário. Tente novamente em instantes.');
   }

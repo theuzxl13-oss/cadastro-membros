@@ -61,13 +61,6 @@ export function aplicarFiltros(consulta, f) {
   return c;
 }
 
-export async function urlFoto(caminho, segundos = 300) {
-  if (!caminho) return null;
-  const { data, error } = await sb.storage.from(BUCKET).createSignedUrl(caminho, segundos);
-  if (error) return null;
-  return data.signedUrl;
-}
-
 /** Baixa a foto como blob local (útil para impressão e para não reutilizar URL). */
 export async function blobFoto(caminho) {
   if (!caminho) return null;

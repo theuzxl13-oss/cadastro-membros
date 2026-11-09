@@ -354,3 +354,34 @@ test('recuperação de senha por e-mail', async ({ page }) => {
   await page.click('#btn-entrar');
   await expect(page.locator('.indicadores')).toBeVisible();
 });
+
+test('XSS armazenado: conteúdo malicioso gravado no banco aparece como texto e não executa', async ({ page }) => {
+  const payload = '<img src=x onerror="window.__xss=1">"><script>window.__xss=1</script>';
+  const [g] = await svc('/rest/v1/congregacoes?select=id', { method: 'POST', headers: { Prefer: 'return=representation' }, body: { nome: `XSS ${sufixo} ${payload}` } });
+  await svc(`/rest/v1/cadastros?id=eq.${fichaA.id}`, { method: 'PATCH', body: { observacoes: payload, profissao: '<b>negrito</b>' } });
+  let dialogo = false;
+  page.on('dialog', async (d) => { dialogo = true; await d.dismiss(); });
+  await entrar(page);
+  await page.goto(`/admin/painel.html#/cadastro/${fichaA.id}`);
+  await expect(page.locator('#view')).toContainText('<b>negrito</b>');
+  await expect(page.locator('#view')).toContainText('onerror');
+  await page.click('a[data-rota=congregacoes]');
+  await expect(page.locator('#view')).toContainText(`XSS ${sufixo}`);
+  await page.click('a[data-rota=dashboard]');
+  await page.waitForTimeout(300);
+  expect(await page.evaluate(() => window.__xss)).toBeUndefined();
+  expect(dialogo).toBe(false);
+  await svc(`/rest/v1/congregacoes?id=eq.${g.id}`, { method: 'DELETE' });
+});
+
+test('sessão fica só no sessionStorage (não persiste no localStorage) e é limpa no logout', async ({ page }) => {
+  await entrar(page);
+  const local = await page.evaluate(() => JSON.stringify(localStorage));
+  expect(local).not.toContain('access_token');
+  const sess = await page.evaluate(() => JSON.stringify(sessionStorage));
+  expect(sess).toContain('access_token');
+  await page.click('#btn-sair');
+  await expect(page.locator('#aviso')).toContainText('saiu');
+  const depois = await page.evaluate(() => JSON.stringify(sessionStorage));
+  expect(depois).not.toContain('access_token');
+});

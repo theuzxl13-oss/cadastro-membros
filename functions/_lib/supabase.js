@@ -20,9 +20,14 @@ function cabecalhos({ chave }, extra = {}) {
   return h;
 }
 
+// Nunca repassa o corpo da resposta de erro: mensagens do PostgreSQL podem
+// conter a linha inteira ("Failing row contains ...") com CPF, RG, endereço.
+// Registra apenas o status HTTP e o código técnico do erro.
 async function lerErro(resp) {
   const texto = await resp.text().catch(() => '');
-  return `${resp.status} ${texto.slice(0, 300)}`;
+  let codigo = '';
+  try { codigo = String(JSON.parse(texto).code || JSON.parse(texto).error || '').replace(/[^\w.-]/g, '').slice(0, 20); } catch { /* corpo não-JSON */ }
+  return `${resp.status}${codigo ? ` código=${codigo}` : ''}`;
 }
 
 export async function rest(cfg, caminho, { method = 'GET', body, prefer } = {}) {

@@ -39,7 +39,16 @@ export function limparJpeg(bytes) {
 
     if (marcador === 0xda) {
       temScan = true;
-      partes.push(bytes.subarray(i)); // dados comprimidos até o fim (inclui EOI)
+      // Dados comprimidos até o marcador de fim (EOI = FF D9). Nos dados
+      // comprimidos todo 0xFF é seguido de 0x00 ou de um marcador RSTn/SOS/DHT,
+      // então o primeiro FF D9 é o fim real da imagem. Bytes após o EOI
+      // (ex.: arquivo "poliglota" com HTML/ZIP anexado) são descartados.
+      let fim = -1;
+      for (let j = i; j < bytes.length - 1; j++) {
+        if (bytes[j] === 0xff && bytes[j + 1] === 0xd9) { fim = j + 2; break; }
+      }
+      if (fim < 0) throw new ErroImagem('Imagem JPEG incompleta.');
+      partes.push(bytes.subarray(i, fim));
       break;
     }
   }

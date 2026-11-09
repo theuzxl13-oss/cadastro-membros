@@ -93,3 +93,35 @@ test('JPEG: recusa PNG e arquivo truncado', () => {
   const jpg = new Uint8Array(readFileSync(new URL('../fixtures/foto-3x4.jpg', import.meta.url)));
   assert.throws(() => limparJpeg(jpg.subarray(0, 300)), ErroImagem);
 });
+
+test('erros do Supabase NÃO levam dados pessoais para os logs', async () => {
+  const { rest } = await import('../../functions/_lib/supabase.js');
+  const original = globalThis.fetch;
+  globalThis.fetch = async () => new Response(JSON.stringify({
+    code: '23514', details: 'Failing row contains (id, Fulano de Tal, 52998224725, Rua X 10)', message: 'violates check constraint',
+  }), { status: 400 });
+  try {
+    await assert.rejects(rest({ url: 'https://x', chave: 'sb_secret_x' }, 'cadastros', { method: 'POST', body: {} }), (e) => {
+      assert.ok(!e.message.includes('52998224725'));
+      assert.ok(!e.message.includes('Fulano'));
+      assert.match(e.message, /23514/);
+      return true;
+    });
+  } finally {
+    globalThis.fetch = original;
+  }
+});
+
+test('nome só com emojis/símbolos é recusado (mesma contagem do banco)', () => {
+  const { erros } = validarCadastro({ ...base, nome: '😀😀' }, { hoje: '2025-06-01' });
+  assert.ok(erros.nome);
+  const r2 = validarCadastro({ ...base, nome: '...' }, { hoje: '2025-06-01' });
+  assert.ok(r2.erros.nome);
+});
+
+test('JPEG: descarta dados anexados após o fim da imagem', () => {
+  const orig = new Uint8Array(readFileSync(new URL('../fixtures/foto-poliglota.jpg', import.meta.url)));
+  const r = limparJpeg(orig);
+  assert.ok(!Buffer.from(r.bytes).includes('<script>'));
+  assert.deepEqual([...r.bytes.subarray(-2)], [0xff, 0xd9]);
+});

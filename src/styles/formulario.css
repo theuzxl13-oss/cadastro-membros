@@ -59,3 +59,12 @@
 .protocolo { font-size: 1.6rem; font-weight: 800; letter-spacing: .06em; background: var(--gold-bg); border: 1px dashed var(--gold); border-radius: 8px; padding: 10px; display: inline-block; }
 .etapa h2:focus { outline: none; }
 .campo { scroll-margin-top: 110px; }
+
+.politica h1 { text-align: center; }
+.politica .sub { text-align: center; color: var(--muted); }
+.politica .card { margin-bottom: 14px; }
+.politica h2 { font-size: 1.05rem; border-bottom: 2px solid var(--gold); padding-bottom: 6px; }
+.tabela-politica { width: 100%; border-collapse: collapse; font-size: .9rem; }
+.tabela-politica th, .tabela-politica td { border: 1px solid var(--line); padding: 8px; text-align: left; vertical-align: top; }
+.tabela-politica th { background: #faf8f2; }
+.rodape a { color: var(--muted); }

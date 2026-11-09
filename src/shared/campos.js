@@ -3,7 +3,7 @@
 // impressão, exportação) e pelo backend (validação no servidor).
 // Este módulo não depende de DOM nem de bibliotecas externas.
 
-export const VERSAO_CONSENTIMENTO = 'LGPD-2025-01';
+export const VERSAO_CONSENTIMENTO = 'LGPD-2026-11';
 
 export const UFS = [
   'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA',
@@ -270,12 +270,15 @@ export function validarCadastro(entrada, opts = {}) {
         ? 'Selecione uma opção.' : 'Campo obrigatório.';
       continue;
     }
-    if (c.max && v.length > c.max) { erros[c.nome] = `Máximo de ${c.max} caracteres.`; continue; }
-    if (c.min && v.length < c.min) { erros[c.nome] = `Mínimo de ${c.min} caracteres.`; continue; }
+    // Conta caracteres como o PostgreSQL (char_length = pontos de código), não unidades UTF-16
+    const tamanho = [...v].length;
+    if (c.max && tamanho > c.max) { erros[c.nome] = `Máximo de ${c.max} caracteres.`; continue; }
+    if (c.min && tamanho < c.min) { erros[c.nome] = `Mínimo de ${c.min} caracteres.`; continue; }
     switch (c.tipo) {
       case 'texto':
       case 'longo':
         if (/[<>]/.test(v)) erros[c.nome] = 'Não use os caracteres < ou >.';
+        else if (c.min && !/[\p{L}\p{N}]/u.test(v)) erros[c.nome] = 'Preencha com letras ou números.';
         break;
       case 'data':
         if (!dataValida(v)) erros[c.nome] = 'Data inválida.';

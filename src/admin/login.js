@@ -3,6 +3,7 @@ import '../styles/base.css';
 import '../styles/admin.css';
 import { sb, configurado, adminAtual, mensagemErro } from './supabase.js';
 import { ligarVerSenha } from './senha.js';
+import { criarVerificacao } from '../ui/turnstile.js';
 
 if (__DEMO__) import('../demo/faixa-demo.js').then((m) => m.ativarFaixaDemo());
 
@@ -16,6 +17,13 @@ function mostrar(msg, tipo = 'erro') {
 }
 
 ligarVerSenha();
+
+// Verificação anti-robô (obrigatória quando o CAPTCHA está ativo no Supabase Auth)
+let tsLogin = { token: () => '', reset: () => {}, ativo: false };
+let tsRec = tsLogin;
+const tsPronto = criarVerificacao(document.getElementById('ts-login'))
+  .then((v) => { tsLogin = v; })
+  .catch((e) => mostrar(e.message));
 
 const motivos = {
   'sessao-expirada': ['Sua sessão foi encerrada por inatividade. Entre novamente.', 'info'],
@@ -43,7 +51,10 @@ $('#form-login').addEventListener('submit', async (e) => {
   btn.disabled = true;
   btn.textContent = 'Entrando…';
   try {
-    const { error } = await sb.auth.signInWithPassword({ email, password: senha });
+    await tsPronto;
+    const captchaToken = tsLogin.token();
+    if (tsLogin.ativo && !captchaToken) throw new Error('Conclua a verificação de segurança antes de entrar.');
+    const { error } = await sb.auth.signInWithPassword({ email, password: senha, options: captchaToken ? { captchaToken } : undefined });
     if (error) throw error;
     const admin = await adminAtual();
     if (!admin) {
@@ -56,6 +67,7 @@ $('#form-login').addEventListener('submit', async (e) => {
   } catch (err) {
     // pequena espera para dificultar tentativas em sequência
     await new Promise((r) => setTimeout(r, 800));
+    tsLogin.reset();
     mostrar(mensagemErro(err));
   } finally {
     btn.disabled = false;
@@ -63,7 +75,8 @@ $('#form-login').addEventListener('submit', async (e) => {
   }
 });
 
-$('#btn-esqueci').addEventListener('click', () => {
+$('#btn-esqueci').addEventListener('click', async () => {
+  if (!tsRec.ativo) tsRec = await criarVerificacao(document.getElementById('ts-rec')).catch(() => tsRec);
   $('#form-login').hidden = true;
   $('#form-recuperar').hidden = false;
   $('#email-rec').value = $('#email').value;
@@ -83,9 +96,13 @@ $('#form-recuperar').addEventListener('submit', async (e) => {
   const btn = $('#btn-enviar-rec');
   btn.disabled = true;
   try {
+    const captchaToken = tsRec.token();
+    if (tsRec.ativo && !captchaToken) { mostrar('Conclua a verificação de segurança.'); return; }
     const { error } = await sb.auth.resetPasswordForEmail(email, {
       redirectTo: `${location.origin}${caminho('admin/redefinir-senha.html')}`,
+      captchaToken: captchaToken || undefined,
     });
+    tsRec.reset();
     if (error && /rate limit|too many/i.test(error.message)) throw error;
     // Mensagem neutra: não revela se o e-mail existe
     mostrar('Se o e-mail estiver cadastrado, enviamos um link para criar uma nova senha. Verifique sua caixa de entrada e o spam.', 'ok');
