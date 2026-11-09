@@ -2,15 +2,15 @@
 
 | Campo | Conteúdo |
 |---|---|
-| Controlador | Igreja Evangélica Assembleia de Deus – Ministério do Belém – Setor 46 (razão social/CNPJ: PENDENTE DE DEFINIÇÃO) |
-| Encarregado | PENDENTE DE DEFINIÇÃO |
+| Controlador | AD Belém – Setor 46 (Igreja Evangélica Assembleia de Deus – Ministério do Belém – Setor 46), CNPJ 62.769.500/0328-58. Razão social a conferir no Cartão CNPJ |
+| Encarregado / atendimento ao titular | Victor Hugo (Secretário Setorial); contato público PENDENTE |
 | Operação | Cadastro digital de membros (Ficha de Cadastro Setorial) |
 | Titulares | Membros e obreiros; cônjuges e pais (dados de terceiros); menores de idade (via responsável) |
 | Categorias de dados | Identificação (nome, CPF, RG, nascimento, filiação, foto), contato (endereço, telefones, e-mail), socioeconômicos (escolaridade, profissão), **sensíveis**: convicção religiosa (origem, batismo, admissão, cargo, congregação) |
-| Finalidades | Rol de membros; contato pastoral e administrativo; documentos eclesiásticos |
+| Finalidades | Controle interno de membros; atualização de dados; organização das congregações; registro de obreiros |
 | Base legal | Art. 11, I (consentimento específico e destacado); art. 14 para menores; guarda mínima: PENDENTE (C3) |
 | Coleta | Formulário web via QR Code, sem conta de usuário |
-| Acesso | Papéis *admin* (total) e *secretaria* (sem exclusão), com login individual e CAPTCHA |
+| Acesso | Administrador geral (*admin*) e secretários autorizados (*secretaria*), com login individual e CAPTCHA; uso exclusivo da igreja, sem compartilhamento |
 | Operadores | Supabase Inc. (banco de dados, autenticação e fotos; região us-west-2, EUA); Cloudflare Inc. (hospedagem, anti-robô, rede global) |
 | Transferência internacional | Sim (EUA). Base do art. 33: PENDENTE (G2) |
 | Retenção | Enquanto durar o vínculo ou até pedido de exclusão; prazos após desligamento: PENDENTE (D1/D2) |

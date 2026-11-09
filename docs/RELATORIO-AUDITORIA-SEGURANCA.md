@@ -221,6 +221,8 @@ Testes em **produção** (somente leitura ou requisições recusadas): seção 4
 
 **Resultado:** **APROVAÇÃO TÉCNICA CONDICIONADA.** Passa a ser aprovada quando (1) a senha do administrador for trocada e (2) o login com Turnstile for confirmado em produção.
 
+**Atualização 09/11/2026:** a instituição respondeu ao questionário resumido. Controlador (CNPJ), finalidades, acesso, compartilhamento e responsável pelo atendimento foram incorporados. Continuam pendentes: prazo de guarda, contato público do encarregado, região do banco, responsável legal de menores (PROPOSTA-001), papel do secretário para excluir e contatos de incidente.
+
 **Conformidade legal (LGPD):** **NÃO APROVADA nesta data.** Depende das respostas do `docs/lgpd/QUESTIONARIO-LGPD.md` (controlador, encarregado, retenção, base legal para guarda após revogação, decisão sobre transferência internacional, contratos com fornecedores). A avaliação legal é separada da técnica e deve ser validada por profissional jurídico.
 
 ---

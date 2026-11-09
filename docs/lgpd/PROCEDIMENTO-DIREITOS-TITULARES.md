@@ -1,6 +1,7 @@
 # Procedimento interno – Direitos dos titulares (LGPD, art. 18)
 
-**Canal:** o publicado na Política de Privacidade (encarregado — PENDENTE DE DEFINIÇÃO — ou secretaria do Setor na sede).
+**Responsável pelo atendimento:** Victor Hugo (Secretário Setorial). **Canal:** secretaria do Setor 46 na sede; e-mail/telefone público PENDENTE DE DEFINIÇÃO.
+**Quem exclui:** o Secretário Setorial (resposta da instituição). Para isso, a conta dele precisa ter papel `admin` no sistema.
 Não foi criado formulário online de solicitação, para não abrir nova porta de coleta de dados. Se a instituição quiser um, ele deve ser avaliado em nova auditoria.
 
 ## 1. Recebimento

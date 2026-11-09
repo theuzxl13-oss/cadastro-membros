@@ -1,7 +1,7 @@
 # Plano de resposta a incidentes de segurança
 
 **Referências:** LGPD arts. 46 a 49; Resolução CD/ANPD nº 15/2024 (comunicação de incidente de segurança); Resolução CD/ANPD nº 2/2022 (agentes de pequeno porte).
-**Equipe:** responsável legal, encarregado e responsável técnico — **PENDENTE DE DEFINIÇÃO** (Questionário H1/H2).
+**Equipe:** coordenação pelo **administrador geral** (resposta da instituição); atendimento aos titulares: **Victor Hugo (Secretário Setorial)**; nomes, telefones e substitutos: **PENDENTE DE DEFINIÇÃO** (Questionário H1/H2).
 
 > Confira sempre o texto vigente das resoluções da ANPD. Os prazos abaixo refletem a Res. 15/2024: comunicação em **3 dias úteis** contados do conhecimento de que o incidente afetou dados pessoais. Agentes de pequeno porte têm **prazo em dobro** (Res. 2/2022), salvo exceções. O enquadramento da instituição está PENDENTE (B3).
 

@@ -3,7 +3,7 @@
 // impressão, exportação) e pelo backend (validação no servidor).
 // Este módulo não depende de DOM nem de bibliotecas externas.
 
-export const VERSAO_CONSENTIMENTO = 'LGPD-2026-11';
+export const VERSAO_CONSENTIMENTO = 'LGPD-2026-11-2';
 
 export const UFS = [
   'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA',

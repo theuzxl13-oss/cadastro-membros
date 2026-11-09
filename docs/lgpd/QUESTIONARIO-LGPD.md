@@ -6,6 +6,31 @@ Todas as respostas abaixo estão como **PENDENTE DE DEFINIÇÃO** até serem pre
 
 > As respostas servem para ajustar a Política de Privacidade, o registro das operações e a base legal. Recomenda-se revisão por profissional jurídico.
 
+---
+
+## Respostas recebidas em 09/11/2026 (análise)
+
+| # | Pergunta | Resposta da instituição | Situação / ação tomada |
+|---|---|---|---|
+| 1 | Responsável legal (controlador) | CNPJ **62.769.500/0328-58**; razão social informada: **AD Belém – Setor 46** | CNPJ com dígitos válidos (estabelecimento filial 0328). **Conferir a razão social exata no Cartão CNPJ** da Receita. Publicado no aviso e na Política |
+| 2 | Finalidade | Controle interno de membros, atualização de dados, organização das congregações e registro de obreiros | **Aplicado.** Aviso, consentimento e Política foram reescritos com estas finalidades. Retiradas "contato pastoral" e "emissão de documentos eclesiásticos", que não foram declaradas (nova versão `LGPD-2026-11-2`) |
+| 3 | Quem visualiza | Administrador geral e secretários autorizados | Compatível com os papéis do sistema (`admin` e `secretaria`). Publicado na Política |
+| 4 | Compartilhamento | Uso exclusivo da igreja | Publicado. Supabase e Cloudflare continuam informados como **operadores** (hospedagem), o que não é compartilhamento, mas precisa ser informado |
+| 5 | Tempo de guarda | "ele será ca" (resposta incompleta) | **PENDENTE DE DEFINIÇÃO.** Responder: prazo após desligamento/falecimento e prazo para fichas pendentes não aprovadas |
+| 6 | Menores de 18 anos | Sim | Consentimento do responsável já é exigido. **Recomenda-se aplicar a PROPOSTA-001** (registrar nome e parentesco do responsável, art. 14 §5º): **aguarda autorização** |
+| 7 | Atendimento de privacidade (encarregado) | Victor Hugo (Secretário Setorial) | Nome cadastrado no sistema e na Política. **Falta e-mail ou telefone público** (art. 41, §1º) |
+| 8 | Pedido de exclusão | O próprio secretário exclui | **Ajuste necessário:** hoje só o papel `admin` exclui. O Victor Hugo precisa ter conta com papel `admin`, ou a instituição decide liberar a exclusão para o papel `secretaria` |
+| 9 | Base legal | PENDENTE DE DEFINIÇÃO | O sistema usa **consentimento específico (art. 11, I)**, a hipótese recomendada para dados religiosos com as finalidades declaradas. A guarda após revogação continua **PENDENTE** (ver C3) |
+| 10 | Local de armazenamento | Banco de dados Supabase | Correto. O projeto atual está nos **EUA (us-west-2)**: **decisão PENDENTE** entre migrar para São Paulo ou adotar base do art. 33 |
+| 11 | Acesso às fotos | Administrador geral e secretários | Compatível (fotos visíveis só para usuários com papel ativo). Publicado |
+| 12 | Incidentes | Administrador geral | Registrado como responsável pela resposta. **Faltam nome e telefone** de contato e um substituto (ver H1/H2) |
+
+**Itens do questionário completo que continuam PENDENTES:** A2–A4, B2–B3, C2–C6, D1–D4, E2–E4, F2–F3, G1–G4, H1–H3, I1–I2.
+
+---
+
+## Questionário completo
+
 ## A. Identificação do controlador
 | # | Pergunta | Resposta |
 |---|---|---|

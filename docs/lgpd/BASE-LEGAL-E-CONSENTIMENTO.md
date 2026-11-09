@@ -22,9 +22,9 @@
 
 **Por que não basta "marcar uma caixa":** o consentimento só é válido se for **livre** (não condicionado a algo que não dependa dele), **informado** (aviso claro, que o formulário e a política fornecem), **inequívoco**, **específico** (finalidades listadas) e **destacado**, separado de outros termos. A recusa não pode gerar prejuízo indevido. Por exemplo: a pessoa pode pedir o cadastro em papel ou presencial, se a instituição assim decidir (PENDENTE).
 
-## 3. Texto do termo de consentimento (vigente no formulário)
+## 3. Texto do termo de consentimento (vigente no formulário — versão LGPD-2026-11-2)
 
-> **Consentimento específico (LGPD, art. 11, I):** li o aviso de privacidade e **autorizo** a Igreja Evangélica Assembleia de Deus – Ministério do Belém – Setor 46 a tratar os dados desta ficha — inclusive os **dados sensíveis sobre minha convicção religiosa** (batismo, admissão, cargo, congregação) e minha **fotografia** — exclusivamente para cadastro no rol de membros, contato pastoral e administrativo e emissão de documentos eclesiásticos, com armazenamento nos fornecedores indicados. Sei que posso revogar esta autorização a qualquer momento.
+> **Consentimento específico (LGPD, art. 11, I):** li o aviso de privacidade e **autorizo** a Igreja Evangélica Assembleia de Deus – Ministério do Belém – Setor 46 a tratar os dados desta ficha — inclusive os **dados sensíveis sobre minha convicção religiosa** (batismo, admissão, cargo, congregação) e minha **fotografia** — exclusivamente para controle interno de membros, atualização dos dados cadastrais, organização das congregações e registro de obreiros do Setor 46, com armazenamento nos fornecedores indicados. Sei que posso revogar esta autorização a qualquer momento.
 
 Para menores de 18 anos, há uma segunda marcação obrigatória:
 
