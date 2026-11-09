@@ -170,6 +170,13 @@ npm run test:e2e
 ```
 Os E2E usam o Supabase local, criam seus próprios usuários/fichas de teste e apagam o que criaram. **Não rode contra produção.**
 
+### Simulador iOS (macOS)
+O sistema é web, então no iPhone ele roda no Safari: não há app nativo, Xcode build nem CocoaPods. Em um Mac com Xcode e Docker:
+```bash
+scripts/ios-simulador.sh
+```
+O script confere Xcode/runtime iOS/Docker, sobe o Supabase local e o servidor, liga um iPhone no Simulador e abre o formulário. Para outra tela: `scripts/ios-simulador.sh abrir /admin/`; para screenshot: `scripts/ios-simulador.sh print`. Logs e inspeção: Safari do Mac → menu **Desenvolvedor → Simulator**.
+
 ## 7. Checklist de testes
 
 Resultado da última execução: **9 testes unitários + 36 testes E2E aprovados** (Supabase local + Cloudflare Pages local).
