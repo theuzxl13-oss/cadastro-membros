@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#141414">
+  <title>Acesso administrativo – AD Belém Setor 46</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+</head>
+<body class="pagina-login">
+  <header class="topo">
+    <img class="logo" src="/img/logo-setor46.jpg" width="1536" height="294"
+         alt="Igreja Evangélica Assembleia de Deus em São Paulo – Ministério do Belém – Setor 46 – Embu-Guaçu">
+  </header>
+  <main class="container login-container">
+    <div class="card">
+      <h1>Painel administrativo</h1>
+      <p class="sub">Acesso restrito à secretaria e administradores do Setor 46.</p>
+      <div id="aviso" class="alerta" role="alert" hidden></div>
+
+      <form id="form-login" novalidate>
+        <div class="campo">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" name="email" autocomplete="username" required inputmode="email">
+        </div>
+        <div class="campo">
+          <label for="senha">Senha</label>
+          <div class="senha-wrap">
+            <input type="password" id="senha" name="senha" autocomplete="current-password" required>
+            <button type="button" class="btn sec peq ver-senha" data-alvo="senha" aria-pressed="false">Mostrar</button>
+          </div>
+        </div>
+        <button type="submit" class="btn largo" id="btn-entrar">Entrar</button>
+        <p class="centro"><button type="button" class="btn link" id="btn-esqueci">Esqueci minha senha</button></p>
+      </form>
+
+      <form id="form-recuperar" novalidate hidden>
+        <p>Informe o e-mail cadastrado. Se ele pertencer a um administrador, você receberá um link para criar uma nova senha.</p>
+        <div class="campo">
+          <label for="email-rec">E-mail</label>
+          <input type="email" id="email-rec" autocomplete="username" required inputmode="email">
+        </div>
+        <button type="submit" class="btn largo" id="btn-enviar-rec">Enviar link de recuperação</button>
+        <p class="centro"><button type="button" class="btn link" id="btn-voltar-login">Voltar ao login</button></p>
+      </form>
+    </div>
+    <p class="centro peq"><a href="/">Ir para o formulário público</a></p>
+  </main>
+  <script type="module" src="/src/admin/login.js"></script>
+</body>
+</html>

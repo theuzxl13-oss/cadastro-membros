@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#141414">
+  <meta name="description" content="Ficha de Cadastro Setorial digital – Igreja Evangélica Assembleia de Deus – Ministério do Belém – Setor 46 – Embu-Guaçu.">
+  <title>Ficha de Cadastro Setorial – AD Belém Setor 46</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+</head>
+<body>
+  <header class="topo">
+    <img class="logo" src="/img/logo-setor46.jpg" width="1536" height="294"
+         alt="Igreja Evangélica Assembleia de Deus em São Paulo – Ministério do Belém – Setor 46 – Embu-Guaçu">
+  </header>
+
+  <main class="container" id="conteudo">
+    <div class="titulo-ficha">
+      <h1>Ficha de Cadastro Setorial</h1>
+      <p class="sub" id="sub-sede"></p>
+    </div>
+
+    <div id="estado-carregando" class="card centro" aria-live="polite">
+      <span class="carregando"></span> Carregando formulário…
+    </div>
+    <div id="estado-erro" class="alerta erro" role="alert" hidden></div>
+    <div id="estado-fechado" class="card" hidden>
+      <h2>Recebimento temporariamente fechado</h2>
+      <p>No momento a secretaria não está recebendo novas fichas pelo formulário digital. Procure a secretaria da sua congregação.</p>
+    </div>
+
+    <form id="ficha" novalidate hidden autocomplete="on">
+      <div class="progresso" aria-label="Progresso do preenchimento">
+        <div class="progresso-texto"><span id="prog-etapa">Etapa 1 de 6</span> · <strong id="prog-titulo">Dados pessoais</strong></div>
+        <div class="progresso-barra" role="progressbar" aria-valuemin="1" aria-valuemax="6" aria-valuenow="1" id="prog-barra"><span id="prog-preench"></span></div>
+        <ol class="progresso-passos" id="prog-passos"></ol>
+      </div>
+
+      <p class="legenda-obr">Campos marcados com <span class="obr">*</span> são obrigatórios. Os demais são opcionais — preencha o que se aplica a você.</p>
+
+      <section class="card etapa" data-etapa="1" aria-labelledby="t-e1">
+        <h2 id="t-e1">Dados pessoais</h2>
+        <div class="grade g2" data-campos="1"></div>
+      </section>
+
+      <section class="card etapa" data-etapa="2" aria-labelledby="t-e2" hidden>
+        <h2 id="t-e2">Documentos e origem</h2>
+        <div class="grade g2" data-campos="2"></div>
+      </section>
+
+      <section class="card etapa" data-etapa="3" aria-labelledby="t-e3" hidden>
+        <h2 id="t-e3">Endereço e contato</h2>
+        <p class="dica-bloco">Digite o CEP para preencher o endereço automaticamente.</p>
+        <div class="grade g2" data-campos="3"></div>
+      </section>
+
+      <section class="card etapa" data-etapa="4" aria-labelledby="t-e4" hidden>
+        <h2 id="t-e4">Vida eclesiástica</h2>
+        <div class="grade g2" data-campos="4"></div>
+        <p class="aviso-obreiro" id="aviso-obreiro" hidden>Para obreiros: informe o local e a data de apresentação ou consagração.</p>
+      </section>
+
+      <section class="card etapa" data-etapa="5" aria-labelledby="t-e5" hidden>
+        <h2 id="t-e5">Foto 3x4 <span class="obr">*</span></h2>
+        <p>Use uma foto recente, de frente, com o rosto bem visível e fundo claro. Você pode tirar agora com a câmera ou escolher da galeria.</p>
+        <div class="foto-area">
+          <div class="foto-quadro" id="foto-quadro">
+            <canvas id="foto-canvas" width="600" height="800" aria-label="Pré-visualização da foto 3x4" hidden></canvas>
+            <div class="foto-vazia" id="foto-vazia">
+              <svg viewBox="0 0 24 24" width="48" height="48" aria-hidden="true"><path fill="currentColor" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-3.3 0-8 1.7-8 5v1h16v-1c0-3.3-4.7-5-8-5Z"/></svg>
+              <span>3 x 4</span>
+            </div>
+          </div>
+          <div class="foto-controles">
+            <label class="btn ouro" for="foto-arquivo" id="foto-escolher">Escolher ou tirar foto</label>
+            <input type="file" id="foto-arquivo" accept="image/*" class="sr-only">
+            <div id="foto-ajuste" hidden>
+              <label for="foto-zoom" class="rot-peq">Aproximar</label>
+              <input type="range" id="foto-zoom" min="1" max="3" step="0.01" value="1">
+              <p class="dica">Arraste a foto para centralizar o rosto.</p>
+              <button type="button" class="btn sec peq" id="foto-remover">Remover foto</button>
+            </div>
+            <p class="erro-msg" id="foto-erro" role="alert" hidden></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card etapa" data-etapa="6" aria-labelledby="t-e6" hidden>
+        <h2 id="t-e6">Revisão e envio</h2>
+        <p>Confira seus dados antes de enviar. Toque em <strong>Corrigir</strong> para alterar uma etapa.</p>
+        <div id="revisao"></div>
+
+        <div class="privacidade" id="privacidade">
+          <h3>Aviso de privacidade (LGPD – Lei 13.709/2018)</h3>
+          <p><strong>Quem trata seus dados:</strong> Igreja Evangélica Assembleia de Deus – Ministério do Belém – Setor 46 (Embu-Guaçu/SP), <span id="priv-sede"></span>.</p>
+          <p><strong>Para quê:</strong> cadastro e organização dos membros e obreiros do Setor, contato pastoral e administrativo e emissão de documentos eclesiásticos (como cartas e credenciais). Seus dados não serão vendidos nem usados para propaganda.</p>
+          <p><strong>Dados sensíveis:</strong> esta ficha contém informações sobre convicção religiosa, além de CPF, RG, endereço e fotografia. Por isso pedimos seu <strong>consentimento específico</strong> (art. 11, I, da LGPD).</p>
+          <p><strong>Quem tem acesso:</strong> somente a secretaria e administradores autorizados do Setor, mediante login. A foto fica em área privada. Os dados ficam em provedores de tecnologia contratados para hospedagem (Supabase e Cloudflare), que atuam apenas como operadores. Não há compartilhamento com terceiros, salvo obrigação legal.</p>
+          <p><strong>Por quanto tempo:</strong> enquanto durar seu vínculo com a igreja ou até você pedir a exclusão, ressalvadas obrigações legais.</p>
+          <p><strong>Seus direitos:</strong> confirmar o tratamento, acessar, corrigir, pedir a exclusão dos dados e revogar este consentimento a qualquer momento (art. 18). <span id="priv-contato">Para isso, procure a secretaria do Setor.</span></p>
+        </div>
+
+        <div class="consentimentos">
+          <label class="check">
+            <input type="checkbox" id="consentimento" name="consentimento_check">
+            <span>Li o aviso de privacidade e <strong>autorizo</strong> o tratamento dos meus dados pessoais, inclusive os dados sensíveis sobre convicção religiosa e minha fotografia, para as finalidades descritas. <span class="obr">*</span></span>
+          </label>
+          <label class="check" id="bloco-responsavel" hidden>
+            <input type="checkbox" id="consentimento-responsavel">
+            <span>O titular é <strong>menor de 18 anos</strong>. Declaro que sou o pai, a mãe ou o responsável legal e dou o consentimento em seu nome. <span class="obr">*</span></span>
+          </label>
+          <p class="erro-msg" id="consentimento-erro" role="alert" hidden></p>
+        </div>
+
+        <div id="turnstile" class="turnstile"></div>
+      </section>
+
+      <!-- Campo-armadilha anti-robô: não preencher -->
+      <div class="hp" aria-hidden="true">
+        <label for="website">Não preencha este campo</label>
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div id="erro-envio" class="alerta erro" role="alert" hidden></div>
+
+      <div class="nav-etapas">
+        <button type="button" class="btn sec" id="btn-voltar" hidden>Voltar</button>
+        <button type="button" class="btn" id="btn-avancar">Continuar</button>
+        <button type="submit" class="btn ok" id="btn-enviar" hidden>Enviar ficha</button>
+      </div>
+    </form>
+
+    <section id="sucesso" class="card sucesso" hidden aria-live="polite">
+      <div class="sucesso-icone" aria-hidden="true">✓</div>
+      <h2>Ficha enviada com sucesso!</h2>
+      <p>Seu número de protocolo é:</p>
+      <p class="protocolo" id="protocolo"></p>
+      <p>Sua ficha foi recebida e está <strong>pendente</strong> de conferência e aprovação pela secretaria do Setor 46. Guarde o número de protocolo.</p>
+      <button type="button" class="btn sec" id="btn-nova">Preencher outra ficha</button>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    Igreja Evangélica Assembleia de Deus – Ministério do Belém – Setor 46 – Embu-Guaçu/SP<br>
+    Seus dados são protegidos conforme a LGPD.
+  </footer>
+
+  <script type="module" src="/src/public/formulario.js"></script>
+</body>
+</html>

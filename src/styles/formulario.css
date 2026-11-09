@@ -1,0 +1,61 @@
+.titulo-ficha { text-align: center; margin: 6px 0 14px; }
+.titulo-ficha h1 { letter-spacing: .04em; text-transform: uppercase; font-size: 1.2rem; }
+.titulo-ficha .sub { color: var(--muted); font-size: .88rem; margin: 0; }
+.centro { text-align: center; }
+.legenda-obr { font-size: .85rem; color: var(--muted); }
+.dica-bloco { color: var(--muted); font-size: .88rem; }
+
+.progresso { position: sticky; top: 0; z-index: 5; background: var(--paper); padding: 10px 0 12px; margin-bottom: 4px; }
+.progresso-texto { font-size: .9rem; margin-bottom: 6px; }
+.progresso-barra { height: 8px; background: var(--line-2); border-radius: 99px; overflow: hidden; }
+.progresso-barra span { display: block; height: 100%; width: 16%; background: var(--gold); transition: width .25s; }
+.progresso-passos { display: none; list-style: none; margin: 10px 0 0; padding: 0; gap: 6px; }
+.progresso-passos li { flex: 1; font-size: .74rem; color: var(--muted); text-align: center; }
+.progresso-passos li.atual { color: var(--ink); font-weight: 700; }
+.progresso-passos li.feito { color: var(--gold-text); }
+@media (min-width: 620px) { .progresso-passos { display: flex; } }
+
+.etapa h2 { border-bottom: 2px solid var(--gold); padding-bottom: 8px; margin-bottom: 16px; }
+.aviso-obreiro { color: var(--red); font-weight: 600; font-size: .9rem; }
+
+.nav-etapas { display: flex; gap: 10px; justify-content: space-between; margin: 16px 0 8px; }
+.nav-etapas .btn { flex: 1; }
+@media (min-width: 620px) { .nav-etapas .btn { flex: 0 0 auto; min-width: 160px; } .nav-etapas { justify-content: flex-end; } #btn-voltar { margin-right: auto; } }
+
+/* Foto */
+.foto-area { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+.foto-quadro {
+  width: 180px; aspect-ratio: 3 / 4; border: 2px dashed #b7af98; border-radius: 6px;
+  background: #faf8f2; position: relative; overflow: hidden; touch-action: none; flex: 0 0 auto;
+}
+.foto-quadro.com-foto { border-style: solid; border-color: var(--ink); cursor: grab; }
+.foto-quadro canvas { width: 100%; height: 100%; display: block; }
+.foto-vazia { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #b7af98; font-weight: 700; }
+.foto-controles { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 10px; }
+.foto-controles input[type=range] { width: 100%; accent-color: var(--ink); }
+.rot-peq { font-size: .85rem; font-weight: 600; }
+
+/* Revisão */
+.rev-bloco { border: 1px solid var(--line); border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+.rev-bloco header { display: flex; justify-content: space-between; align-items: center; background: var(--line-2); padding: 8px 12px; font-weight: 700; }
+.rev-bloco dl { margin: 0; padding: 6px 12px 10px; display: grid; grid-template-columns: 1fr; gap: 2px 12px; }
+.rev-bloco dt { color: var(--muted); font-size: .8rem; margin-top: 6px; }
+.rev-bloco dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; white-space: pre-line; }
+@media (min-width: 620px) { .rev-bloco dl { grid-template-columns: 220px 1fr; } .rev-bloco dt { margin-top: 0; } }
+.rev-foto { display: flex; gap: 12px; align-items: center; padding: 10px 12px; }
+.rev-foto img { width: 90px; aspect-ratio: 3/4; object-fit: cover; border: 1px solid var(--line); }
+
+.privacidade { background: #faf8f2; border: 1px solid var(--line); border-radius: 8px; padding: 14px; font-size: .88rem; max-height: 320px; overflow-y: auto; margin: 16px 0; }
+.privacidade h3 { font-size: .95rem; }
+.consentimentos { display: flex; flex-direction: column; gap: 10px; }
+.check { display: flex; gap: 10px; align-items: flex-start; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer; }
+.check input { width: 22px; height: 22px; flex: 0 0 auto; accent-color: var(--ink); margin-top: 2px; }
+.turnstile { margin-top: 14px; min-height: 0; }
+
+.hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+.sucesso { text-align: center; }
+.sucesso-icone { width: 64px; height: 64px; margin: 0 auto 10px; border-radius: 50%; background: var(--green); color: #fff; font-size: 34px; display: flex; align-items: center; justify-content: center; }
+.protocolo { font-size: 1.6rem; font-weight: 800; letter-spacing: .06em; background: var(--gold-bg); border: 1px dashed var(--gold); border-radius: 8px; padding: 10px; display: inline-block; }
+.etapa h2:focus { outline: none; }
+.campo { scroll-margin-top: 110px; }

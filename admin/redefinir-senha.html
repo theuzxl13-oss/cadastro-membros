@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#141414">
+  <title>Redefinir senha – AD Belém Setor 46</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+</head>
+<body class="pagina-login">
+  <header class="topo">
+    <img class="logo" src="/img/logo-setor46.jpg" width="1536" height="294"
+         alt="Igreja Evangélica Assembleia de Deus em São Paulo – Ministério do Belém – Setor 46 – Embu-Guaçu">
+  </header>
+  <main class="container login-container">
+    <div class="card">
+      <h1>Criar nova senha</h1>
+      <div id="aviso" class="alerta" role="alert" hidden></div>
+      <p id="aguardando"><span class="carregando"></span> Validando link…</p>
+      <form id="form-nova" novalidate hidden>
+        <div class="campo">
+          <label for="senha1">Nova senha</label>
+          <div class="senha-wrap">
+            <input type="password" id="senha1" autocomplete="new-password" minlength="10" required>
+            <button type="button" class="btn sec peq ver-senha" data-alvo="senha1" aria-pressed="false">Mostrar</button>
+          </div>
+          <span class="dica">Mínimo de 10 caracteres, com letras e números.</span>
+        </div>
+        <div class="campo">
+          <label for="senha2">Repita a nova senha</label>
+          <input type="password" id="senha2" autocomplete="new-password" minlength="10" required>
+        </div>
+        <button type="submit" class="btn largo" id="btn-salvar">Salvar nova senha</button>
+      </form>
+    </div>
+    <p class="centro peq"><a href="/admin/">Voltar ao login</a></p>
+  </main>
+  <script type="module" src="/src/admin/redefinir.js"></script>
+</body>
+</html>

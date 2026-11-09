@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#141414">
+  <title>Painel – Cadastro Setorial – AD Belém Setor 46</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+</head>
+<body class="pagina-painel">
+  <div id="verificando" class="tela-verificando"><span class="carregando"></span> Verificando acesso…</div>
+
+  <div class="app" id="app" hidden>
+    <aside class="lateral" id="lateral">
+      <div class="lateral-logo">
+        <img src="/img/logo-setor46.jpg" width="1536" height="294" alt="Assembleia de Deus – Ministério do Belém – Setor 46 – Embu-Guaçu">
+      </div>
+      <nav class="menu" aria-label="Menu principal">
+        <a href="#/dashboard" data-rota="dashboard">Dashboard</a>
+        <a href="#/cadastros" data-rota="cadastros">Todos os cadastros</a>
+        <a href="#/pendentes" data-rota="pendentes">Pendentes <span class="contador" id="cont-pendentes" hidden></span></a>
+        <a href="#/aprovados" data-rota="aprovados">Aprovados</a>
+        <a href="#/congregacoes" data-rota="congregacoes">Congregações</a>
+        <a href="#/qrcode" data-rota="qrcode">QR Code</a>
+        <a href="#/exportacao" data-rota="exportacao">Exportação</a>
+        <a href="#/configuracoes" data-rota="configuracoes">Configurações</a>
+        <button type="button" class="sair" id="btn-sair">Sair</button>
+      </nav>
+      <div class="lateral-usuario" id="usuario"></div>
+    </aside>
+
+    <div class="principal">
+      <header class="barra-movel">
+        <button type="button" class="btn sec peq" id="btn-menu" aria-controls="lateral" aria-expanded="false">☰ Menu</button>
+        <img src="/img/logo-setor46.jpg" width="1536" height="294" alt="AD Belém Setor 46" class="barra-logo">
+      </header>
+      <main id="view" class="view" tabindex="-1"></main>
+    </div>
+    <div class="veu" id="veu" hidden></div>
+  </div>
+
+  <!-- Área exclusiva de impressão (ficha A4 e cartaz do QR Code) -->
+  <div id="impressao" aria-hidden="true"></div>
+
+  <script type="module" src="/src/admin/painel.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+# Configuração do Cloudflare Pages (build: npm run build, saída: dist)
+name = "cadastro-setor46"
+pages_build_output_dir = "dist"
+compatibility_date = "2025-10-01"

@@ -1,0 +1,51 @@
+/* ---------- Impressão: ficha A4 e cartaz do QR Code ---------- */
+@page { size: A4 portrait; margin: 10mm; }
+
+@media print {
+  body.imprimindo > *:not(#impressao) { display: none !important; }
+  body.imprimindo { background: #fff; }
+  body.imprimindo #impressao { display: block !important; }
+}
+
+#impressao, #impressao * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+#impressao { color: #000; font-family: Arial, Helvetica, sans-serif; font-size: 9.5pt; line-height: 1.25; }
+
+.pf { width: 190mm; margin: 0 auto; }
+.pf-logo { background: #141414; text-align: center; border-bottom: 2px solid #b08a2e; }
+.pf-logo img { width: 100%; height: auto; display: block; }
+.pf-cab { display: flex; gap: 4mm; border: 1.2pt solid #000; border-top: none; padding: 3mm; align-items: stretch; }
+.pf-cab-texto { flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: center; }
+.pf-cab-texto .t1 { font-weight: bold; font-size: 10pt; }
+.pf-cab-texto .t2 { font-size: 9pt; }
+.pf-cab-texto .t3 { font-size: 8pt; font-style: italic; }
+.pf-cab-texto h1 { font-size: 13pt; margin: 2mm 0 0; letter-spacing: .5pt; }
+.pf-cab-texto .prot { font-size: 8.5pt; margin-top: 2mm; }
+.pf-foto { width: 30mm; height: 40mm; border: 1pt dotted #000; display: flex; align-items: center; justify-content: center; overflow: hidden; flex: 0 0 auto; font-size: 8pt; text-align: center; }
+.pf-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.pf-tab { border: 1.2pt solid #000; border-top: none; }
+.pf-lin { display: flex; border-top: .6pt solid #000; min-height: 7.2mm; }
+.pf-lin:first-child { border-top: none; }
+.pf-cel { display: flex; align-items: center; gap: 1.5mm; padding: .8mm 1.5mm; border-left: .6pt solid #000; min-width: 0; }
+.pf-cel:first-child { border-left: none; }
+.pf-cel b { white-space: nowrap; }
+.pf-cel span { overflow-wrap: anywhere; }
+.pf-cel.destaque b { background: #d8cfa6; }
+.pf-lin.alta { min-height: 12mm; align-items: stretch; }
+.pf-lin.alta .pf-cel { align-items: flex-start; }
+.pf-op { display: inline-flex; align-items: center; gap: 1mm; margin-right: 3mm; white-space: nowrap; }
+.pf-box { display: inline-block; width: 3.2mm; height: 3.2mm; border: .8pt solid #000; text-align: center; line-height: 3.2mm; font-size: 8pt; font-weight: bold; }
+.pf-cargos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2mm 6mm; padding: 2.5mm 6mm; width: 100%; }
+.pf-cargos .pf-op .pf-box { width: 4.5mm; height: 4.5mm; line-height: 4.5mm; font-size: 10pt; }
+.pf-obreiro b { color: #b3261e; }
+.pf-rodape { margin-top: 3mm; display: flex; justify-content: space-between; font-size: 7.5pt; color: #333; gap: 4mm; }
+.pf-assin { margin-top: 12mm; display: flex; justify-content: space-around; font-size: 8.5pt; }
+.pf-assin div { border-top: .6pt solid #000; width: 70mm; text-align: center; padding-top: 1mm; }
+
+/* Cartaz do QR Code */
+.qr-cartaz { width: 190mm; margin: 0 auto; text-align: center; }
+.qr-cartaz .pf-logo { margin-bottom: 10mm; }
+.qr-cartaz h1 { font-size: 24pt; margin: 0 0 4mm; }
+.qr-cartaz p { font-size: 13pt; margin: 0 0 6mm; }
+.qr-cartaz img.qr { width: 120mm; height: 120mm; image-rendering: pixelated; }
+.qr-cartaz .url { font-family: monospace; font-size: 12pt; margin-top: 6mm; }
