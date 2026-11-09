@@ -23,7 +23,7 @@ export default defineConfig({
     { name: 'desktop', use: { viewport: { width: 1280, height: 900 } }, testMatch: /painel\.spec/ },
   ],
   webServer: {
-    command: 'npm run build && npx wrangler pages dev dist --port 8788 --ip 127.0.0.1',
+    command: 'npm run build && npx wrangler pages dev dist --port 8788 --compatibility-date=2025-10-01 --ip 127.0.0.1',
     url: 'http://127.0.0.1:8788/api/form-config',
     reuseExistingServer: true,
     timeout: 120_000,

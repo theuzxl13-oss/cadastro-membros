@@ -56,7 +56,7 @@ case "${1:-iniciar}" in
     echo "== Build e servidor =="
     npm run build
     if ! curl -fs "${URL_BASE}/api/form-config" >/dev/null; then
-      nohup npx wrangler pages dev dist --port 8788 --ip 127.0.0.1 > .wrangler-dev.log 2>&1 &
+      nohup npx wrangler pages dev dist --port 8788 --compatibility-date=2025-10-01 --ip 127.0.0.1 > .wrangler-dev.log 2>&1 &
       for _ in $(seq 1 60); do curl -fs "${URL_BASE}/api/form-config" >/dev/null && break; sleep 1; done
     fi
     curl -fs "${URL_BASE}/api/form-config" >/dev/null || falha "Servidor não respondeu (veja .wrangler-dev.log)."
