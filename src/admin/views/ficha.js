@@ -1,5 +1,5 @@
 import {
-  el, preencher, carregandoEm, dataHora, toast, confirmar,
+  el, preencher, carregandoEm, dataHora, toast, confirmar, baixarBlob,
 } from '../util.js';
 import {
   CAMPOS, ETAPAS, formatarValor, rotulo, validarCadastro, mascaraCPF,
@@ -84,6 +84,19 @@ async function mostrar(ctx, c, congregacoes, fotoUrl, fotoBlob) {
       },
     }),
   ];
+  if (fotoBlob) {
+    acoes.push(el('button', {
+      type: 'button',
+      class: 'btn sec',
+      text: 'Baixar foto',
+      title: 'Baixa a foto 3x4 em JPEG (sem metadados). O arquivo leva o protocolo, não o nome do membro.',
+      onclick: () => {
+        baixarBlob(fotoBlob, `foto-3x4-${c.protocolo}.jpg`);
+        // Download de dado pessoal fica registrado na auditoria (sem dados pessoais)
+        sb.rpc('admin_registrar_acao', { p_acao: 'download_foto', p_entidade_id: c.id, p_detalhes: { protocolo: c.protocolo } }).then(() => {});
+      },
+    }));
+  }
   if (admin.papel === 'admin') {
     acoes.push(el('button', { type: 'button', class: 'btn perigo', text: 'Excluir cadastro', onclick: () => excluir(ctx, c) }));
   }

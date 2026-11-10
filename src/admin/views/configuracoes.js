@@ -14,6 +14,7 @@ const ACOES = {
   exportacao_csv: 'Exportação CSV',
   exportacao_excel: 'Exportação Excel',
   impressao_ficha: 'Impressão de ficha',
+  download_foto: 'Download de foto',
   login: 'Login',
   logout: 'Logout',
   admin_promovido: 'Administrador ativado',

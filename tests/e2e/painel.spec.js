@@ -385,3 +385,16 @@ test('sessão fica só no sessionStorage (não persiste no localStorage) e é li
   const depois = await page.evaluate(() => JSON.stringify(sessionStorage));
   expect(depois).not.toContain('access_token');
 });
+
+test('baixar foto 3x4: arquivo JPEG com o protocolo no nome e registro na auditoria', async ({ page }) => {
+  await entrar(page);
+  await page.goto(`/admin/painel.html#/cadastro/${fichaA.id}`);
+  await expect(page.locator('.ficha-foto img')).toBeVisible();
+  const [dl] = await Promise.all([page.waitForEvent('download'), page.click('button:has-text("Baixar foto")')]);
+  expect(dl.suggestedFilename()).toBe(`foto-3x4-${fichaA.protocolo}.jpg`);
+  const bytes = readFileSync(await dl.path());
+  expect(bytes.subarray(0, 3)).toEqual(Buffer.from([0xff, 0xd8, 0xff]));
+  await expect.poll(async () => (await svc(`/rest/v1/auditoria?select=acao,detalhes&acao=eq.download_foto&entidade_id=eq.${fichaA.id}`)).length).toBeGreaterThan(0);
+  const aud = await svc(`/rest/v1/auditoria?select=detalhes&acao=eq.download_foto&entidade_id=eq.${fichaA.id}`);
+  expect(JSON.stringify(aud)).not.toContain(fichaA.nome);
+});
