@@ -181,7 +181,7 @@ test('impressão A4 com logo, campos e foto', async ({ page }) => {
   expect(r.texto).toContain('FICHA DE CADASTRO SETORIAL');
   expect(r.texto).toContain(`Painel Alfa ${sufixo}`);
   expect(r.texto).toContain('111.444.777-35');
-  expect(r.imgs[0].src).toBe('/img/logo-setor46.jpg');
+  expect(r.imgs[0].src).toBe('/img/brasao-ficha.png');
   expect(r.imgs[0].w).toBeGreaterThan(0);
   expect(r.imgs[1].src).toMatch(/^blob:/);
   expect(r.imgs[1].w).toBe(600);

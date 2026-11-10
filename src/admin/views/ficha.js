@@ -76,7 +76,8 @@ async function mostrar(ctx, c, congregacoes, fotoUrl, fotoBlob) {
     el('button', {
       type: 'button',
       class: 'btn sec',
-      text: 'Imprimir ficha (A4)',
+      text: 'Imprimir ficha / Salvar PDF',
+      title: 'Abre a impressão no modelo da Ficha de Cadastro Setorial. Para PDF, escolha "Salvar como PDF" no destino.',
       onclick: async () => {
         await imprimirFicha(c, congregacoes, fotoBlob);
         sb.rpc('admin_registrar_acao', { p_acao: 'impressao_ficha', p_entidade_id: c.id, p_detalhes: { protocolo: c.protocolo } }).then(() => {});
