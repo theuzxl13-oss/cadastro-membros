@@ -18,7 +18,12 @@
       </div>
       <nav class="menu" aria-label="Menu principal">
         <a href="#/dashboard" data-rota="dashboard">Dashboard</a>
-        <a href="#/cadastros" data-rota="cadastros">Todos os cadastros</a>
+        <a href="#/cadastros" data-rota="cadastros">Todas as fichas</a>
+        <span class="menu-grupo">Por tipo de ficha</span>
+        <a href="#/fichas/cadastro" data-rota="fichas/cadastro" class="sub">Fichas de Cadastro <span class="contador" data-cont-tipo="CADASTRO" hidden></span></a>
+        <a href="#/fichas/batismo" data-rota="fichas/batismo" class="sub">Fichas de Batismo <span class="contador" data-cont-tipo="BATISMO" hidden></span></a>
+        <a href="#/fichas/credencial" data-rota="fichas/credencial" class="sub">Solicitações de Credencial <span class="contador" data-cont-tipo="CREDENCIAL" hidden></span></a>
+        <span class="menu-grupo">Situação</span>
         <a href="#/pendentes" data-rota="pendentes">Pendentes <span class="contador" id="cont-pendentes" hidden></span></a>
         <a href="#/aprovados" data-rota="aprovados">Aprovados</a>
         <a href="#/congregacoes" data-rota="congregacoes">Congregações</a>

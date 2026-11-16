@@ -274,3 +274,9 @@ test.describe('Auditoria: escalada de privilégio e integridade', () => {
     expect(reuso.status).toBeGreaterThanOrEqual(400);
   });
 });
+
+test('tipo de ficha inválido é recusado pelo servidor', async () => {
+  const r = await enviarFicha(DADOS_VALIDOS(congregacaoId, { tipo_ficha: 'ADMIN' }));
+  expect(r.status).toBe(422);
+  expect(r.json.erros.tipo_ficha).toBeTruthy();
+});

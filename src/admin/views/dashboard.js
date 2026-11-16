@@ -1,15 +1,23 @@
 import { el, preencher, carregandoEm, dataHora } from '../util.js';
-import { rotulo, hojeISO } from '../../shared/campos.js';
+import { rotulo, hojeISO, TIPOS_FICHA, tipoPorValor } from '../../shared/campos.js';
 
 export async function viewDashboard({ sb, view, atual }) {
   carregandoEm(view);
   const [{ data: r, error }, { data: recentes, error: e2 }] = await Promise.all([
     sb.rpc('dashboard_resumo'),
-    sb.from('cadastros').select('id,protocolo,nome,cargo,created_at,congregacoes(nome)')
+    sb.from('cadastros').select('id,protocolo,tipo_ficha,nome,cargo,created_at,congregacoes(nome)')
       .eq('status', 'PENDENTE').order('created_at', { ascending: false }).limit(6),
   ]);
   if (error) throw error;
   if (e2) throw e2;
+  // Contagem por tipo de ficha (total e pendentes)
+  const porTipo = await Promise.all(TIPOS_FICHA.map(async (t) => {
+    const [tot, pend] = await Promise.all([
+      sb.from('cadastros').select('id', { count: 'exact', head: true }).eq('tipo_ficha', t.valor),
+      sb.from('cadastros').select('id', { count: 'exact', head: true }).eq('tipo_ficha', t.valor).eq('status', 'PENDENTE'),
+    ]);
+    return { ...t, total: tot.count || 0, pendentes: pend.count || 0 };
+  }));
   if (!atual()) return;
 
   const ind = (cls, num, rot, href) => el('a', { class: `indicador ${cls}`, href },
@@ -32,10 +40,16 @@ export async function viewDashboard({ sb, view, atual }) {
   preencher(view, 
     el('h1', { text: 'Dashboard' }),
     el('div', { class: 'indicadores' },
-      ind('', r.total, 'Total de cadastros', '#/cadastros'),
+      ind('', r.total, 'Total de fichas', '#/cadastros'),
       ind('pend', r.pendentes, 'Pendentes', '#/pendentes'),
       ind('apr', r.aprovados, 'Aprovados', '#/aprovados'),
       ind('mes', r.mes_atual, 'Recebidos neste mês', `#/cadastros?de=${hojeISO().slice(0, 8)}01`)),
+    el('section', { class: 'secao' },
+      el('h2', { text: 'Por tipo de ficha' }),
+      el('div', { class: 'indicadores-tipo' }, porTipo.map((t) => el('a', { class: 'indicador', href: `#/fichas/${t.slug}` },
+        el('div', { class: 'num', text: String(t.total) }),
+        el('div', { class: 'rot', text: t.rotulo }),
+        el('div', { class: 'rot', text: `${t.pendentes} pendente(s)` }))))),
     el('section', { class: 'secao' },
       el('h2', { text: 'Distribuição por congregação' }),
       linhas.length
@@ -49,6 +63,7 @@ export async function viewDashboard({ sb, view, atual }) {
         ? el('div', { class: 'tabela-wrap' }, el('table', { class: 'tabela responsiva' },
           el('tbody', {}, recentes.map((c) => el('tr', { class: 'clicavel', onclick: () => { location.hash = `#/cadastro/${c.id}`; } },
             el('td', { 'data-rot': 'Protocolo', text: c.protocolo }),
+            el('td', { 'data-rot': 'Tipo' }, el('span', { class: `etiqueta tipo-${c.tipo_ficha}`, text: tipoPorValor(c.tipo_ficha).rotulo })),
             el('td', { 'data-rot': 'Nome' }, el('strong', { text: c.nome })),
             el('td', { 'data-rot': 'Congregação', text: c.congregacoes?.nome || '' }),
             el('td', { 'data-rot': 'Cargo', text: rotulo('cargo', c.cargo) }),

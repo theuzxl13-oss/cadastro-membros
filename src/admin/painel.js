@@ -1,4 +1,5 @@
 import { caminho } from '../ui/caminho.js';
+import { tipoPorSlug, TIPOS_FICHA } from '../shared/campos.js';
 import '../styles/base.css';
 import '../styles/admin.css';
 import '../styles/impressao.css';
@@ -23,6 +24,7 @@ let renderId = 0;
 const ROTAS = {
   dashboard: (c) => viewDashboard(c),
   cadastros: (c) => viewLista(c, null),
+  fichas: (c) => viewLista(c, null, (tipoPorSlug(c.params[0]) || TIPOS_FICHA[0]).valor),
   pendentes: (c) => viewLista(c, 'PENDENTE'),
   aprovados: (c) => viewLista(c, 'APROVADO'),
   cadastro: (c) => viewFicha(c),
@@ -58,6 +60,12 @@ export async function atualizarContadorPendentes() {
   const c = $('#cont-pendentes');
   c.hidden = !count;
   c.textContent = count ? String(count) : '';
+  // Pendentes por tipo de ficha (indicador em cada seção do menu)
+  await Promise.all(TIPOS_FICHA.map(async (t) => {
+    const { count: n } = await sb.from('cadastros').select('id', { count: 'exact', head: true }).eq('status', 'PENDENTE').eq('tipo_ficha', t.valor);
+    const el = document.querySelector(`[data-cont-tipo="${t.valor}"]`);
+    if (el) { el.hidden = !n; el.textContent = n ? String(n) : ''; el.title = `${n || 0} pendente(s)`; }
+  }));
 }
 
 async function render() {
@@ -65,7 +73,8 @@ async function render() {
   const rota = lerRota();
   const fn = ROTAS[rota.nome];
   document.querySelectorAll('.menu a').forEach((a) => {
-    const ativa = a.dataset.rota === rota.nome || (rota.nome === 'cadastro' && a.dataset.rota === 'cadastros');
+    const chave = rota.nome === 'fichas' ? `fichas/${rota.params[0] || 'cadastro'}` : rota.nome;
+    const ativa = a.dataset.rota === chave || (rota.nome === 'cadastro' && a.dataset.rota === 'cadastros');
     a.classList.toggle('ativo', ativa);
     if (ativa) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
   });

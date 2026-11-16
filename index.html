@@ -17,7 +17,7 @@
 
   <main class="container" id="conteudo">
     <div class="titulo-ficha">
-      <h1>Ficha de Cadastro Setorial</h1>
+      <h1 id="titulo-pagina">Ficha de Cadastro Setorial</h1>
       <p class="sub" id="sub-sede"></p>
     </div>
 
@@ -30,7 +30,18 @@
       <p>No momento a secretaria não está recebendo novas fichas pelo formulário digital. Procure a secretaria da sua congregação.</p>
     </div>
 
+    <section id="escolha" class="escolha" hidden aria-labelledby="t-escolha">
+      <h2 id="t-escolha">Selecione a ficha</h2>
+      <p class="dica-bloco">Escolha o motivo do preenchimento. A ficha é a mesma; a secretaria recebe cada tipo em uma seção separada.</p>
+      <div class="escolha-botoes" id="escolha-botoes"></div>
+    </section>
+
     <form id="ficha" novalidate hidden autocomplete="on">
+      <input type="hidden" name="tipo_ficha" id="tipo_ficha" value="">
+      <div class="tipo-atual">
+        <span>Você está preenchendo: <strong id="tipo-atual-rotulo"></strong></span>
+        <button type="button" class="btn link" id="btn-trocar-tipo">Trocar</button>
+      </div>
       <div class="progresso" aria-label="Progresso do preenchimento">
         <div class="progresso-texto"><span id="prog-etapa">Etapa 1 de 6</span> · <strong id="prog-titulo">Dados pessoais</strong></div>
         <div class="progresso-barra" role="progressbar" aria-valuemin="1" aria-valuemax="6" aria-valuenow="1" id="prog-barra"><span id="prog-preench"></span></div>
@@ -94,7 +105,7 @@
         <div class="privacidade" id="privacidade">
           <h3>Aviso de privacidade (LGPD – Lei 13.709/2018)</h3>
           <p><strong>Quem trata seus dados:</strong> Igreja Evangélica Assembleia de Deus – Ministério do Belém – Setor 46 (CNPJ 62.769.500/0328-58), Embu-Guaçu/SP, <span id="priv-sede"></span>.</p>
-          <p><strong>Para quê:</strong> controle interno de membros, atualização dos dados cadastrais, organização das congregações e registro de obreiros do Setor 46. Os dados são usados exclusivamente pela igreja: não serão vendidos, compartilhados com terceiros nem usados para propaganda.</p>
+          <p><strong>Para quê:</strong> controle interno de membros, atualização dos dados cadastrais, organização das congregações, registro de obreiros e encaminhamento de pedidos de batismo e de credencial do Setor 46. Os dados são usados exclusivamente pela igreja: não serão vendidos, compartilhados com terceiros nem usados para propaganda.</p>
           <p><strong>Dados sensíveis:</strong> esta ficha contém informações sobre convicção religiosa, além de CPF, RG, endereço e fotografia. Por isso pedimos seu <strong>consentimento específico</strong> (art. 11, I, da LGPD).</p>
           <p><strong>Quem tem acesso:</strong> somente o administrador geral e os secretários autorizados do Setor, com login individual — inclusive às fotos, que ficam em área privada. Não há compartilhamento com terceiros, salvo obrigação legal.</p>
           <p><strong>Onde ficam:</strong> em provedores de tecnologia contratados apenas para hospedagem (operadores): Supabase, com servidores nos <strong>Estados Unidos</strong> (transferência internacional, art. 33), e Cloudflare.</p>
@@ -106,7 +117,7 @@
         <div class="consentimentos">
           <label class="check">
             <input type="checkbox" id="consentimento" name="consentimento_check">
-            <span><strong>Consentimento específico (LGPD, art. 11, I):</strong> li o aviso de privacidade e <strong>autorizo</strong> a Igreja Evangélica Assembleia de Deus – Ministério do Belém – Setor 46 a tratar os dados desta ficha — inclusive os <strong>dados sensíveis sobre minha convicção religiosa</strong> (batismo, admissão, cargo, congregação) e minha <strong>fotografia</strong> — exclusivamente para controle interno de membros, atualização dos dados cadastrais, organização das congregações e registro de obreiros do Setor 46, com armazenamento nos fornecedores indicados. Sei que posso revogar esta autorização a qualquer momento. <span class="obr">*</span></span>
+            <span><strong>Consentimento específico (LGPD, art. 11, I):</strong> li o aviso de privacidade e <strong>autorizo</strong> a Igreja Evangélica Assembleia de Deus – Ministério do Belém – Setor 46 a tratar os dados desta ficha — inclusive os <strong>dados sensíveis sobre minha convicção religiosa</strong> (batismo, admissão, cargo, congregação) e minha <strong>fotografia</strong> — exclusivamente para controle interno de membros, atualização dos dados cadastrais, organização das congregações, registro de obreiros e encaminhamento de pedidos de batismo e de credencial do Setor 46, com armazenamento nos fornecedores indicados. Sei que posso revogar esta autorização a qualquer momento. <span class="obr">*</span></span>
           </label>
           <label class="check" id="bloco-responsavel" hidden>
             <input type="checkbox" id="consentimento-responsavel">
@@ -136,6 +147,7 @@
     <section id="sucesso" class="card sucesso" hidden aria-live="polite">
       <div class="sucesso-icone" aria-hidden="true">✓</div>
       <h2>Ficha enviada com sucesso!</h2>
+      <p id="sucesso-tipo" class="sucesso-tipo"></p>
       <p>Seu número de protocolo é:</p>
       <p class="protocolo" id="protocolo"></p>
       <p>Sua ficha foi recebida e está <strong>pendente</strong> de conferência e aprovação pela secretaria do Setor 46. Guarde o número de protocolo.</p>

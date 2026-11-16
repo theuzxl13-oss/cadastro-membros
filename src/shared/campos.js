@@ -3,14 +3,24 @@
 // impressão, exportação) e pelo backend (validação no servidor).
 // Este módulo não depende de DOM nem de bibliotecas externas.
 
-export const VERSAO_CONSENTIMENTO = 'LGPD-2026-11-2';
+export const VERSAO_CONSENTIMENTO = 'LGPD-2026-11-3';
 
 export const UFS = [
   'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA',
   'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
 ];
 
+// Mesma ficha, finalidades diferentes (o painel separa por seção)
+export const TIPOS_FICHA = [
+  { valor: 'CADASTRO', slug: 'cadastro', rotulo: 'Ficha de Cadastro', titulo: 'Ficha de Cadastro Setorial', descricao: 'Cadastro ou atualização de dados de membros e obreiros.' },
+  { valor: 'BATISMO', slug: 'batismo', rotulo: 'Ficha de Batismo', titulo: 'Ficha de Batismo', descricao: 'Para quem vai se batizar nas águas.' },
+  { valor: 'CREDENCIAL', slug: 'credencial', rotulo: 'Solicitação de Credencial', titulo: 'Solicitação de Credencial', descricao: 'Pedido de credencial de obreiro.' },
+];
+export const tipoPorSlug = (slug) => TIPOS_FICHA.find((t) => t.slug === String(slug || '').toLowerCase()) || null;
+export const tipoPorValor = (v) => TIPOS_FICHA.find((t) => t.valor === v) || TIPOS_FICHA[0];
+
 export const OPCOES = {
+  tipo_ficha: TIPOS_FICHA.map((t) => [t.valor, t.rotulo]),
   estado_civil: [
     ['SOLTEIRO', 'Solteiro(a)'],
     ['CASADO', 'Casado(a)'],
@@ -69,6 +79,9 @@ export const obreiro = (d) => !!d.cargo && d.cargo !== 'MEMBRO';
 // obrig: true | função(dados) => boolean
 // mostrar: função(dados) => boolean (campo não aplicável fica oculto e é limpo)
 export const CAMPOS = [
+  // --- Etapa 0: tipo de ficha (escolhido na tela inicial, não aparece nas etapas)
+  { nome: 'tipo_ficha', rotulo: 'Tipo de ficha', tipo: 'opcao', opcoes: 'tipo_ficha', obrig: true, etapa: 0, padrao: 'CADASTRO' },
+
   // --- Etapa 1: dados pessoais
   { nome: 'congregacao_id', rotulo: 'Congregação', tipo: 'congregacao', obrig: true, etapa: 1 },
   { nome: 'nome', rotulo: 'Nome completo', tipo: 'texto', max: 150, min: 3, obrig: true, etapa: 1, autocomplete: 'name' },
@@ -259,6 +272,9 @@ export function validarCadastro(entrada, opts = {}) {
     }
     d[c.nome] = v;
   }
+
+  // Fichas enviadas sem tipo (versões antigas do formulário) são de cadastro
+  if (d.tipo_ficha === '') d.tipo_ficha = 'CADASTRO';
 
   // 2ª passada: regras
   for (const c of CAMPOS) {

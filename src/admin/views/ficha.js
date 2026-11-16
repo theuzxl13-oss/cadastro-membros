@@ -2,7 +2,7 @@ import {
   el, preencher, carregandoEm, dataHora, toast, confirmar, baixarBlob,
 } from '../util.js';
 import {
-  CAMPOS, ETAPAS, formatarValor, rotulo, validarCadastro, mascaraCPF,
+  CAMPOS, ETAPAS, formatarValor, rotulo, validarCadastro, mascaraCPF, tipoPorValor,
 } from '../../shared/campos.js';
 import {
   criarCampo, lerValores, aplicarRegras, mostrarErros,
@@ -115,7 +115,9 @@ async function mostrar(ctx, c, congregacoes, fotoUrl, fotoBlob) {
       el('div', { class: 'ficha-foto' }, fotoEl),
       el('div', { class: 'ficha-info' },
         el('h1', { text: c.nome }),
-        el('p', {}, el('span', { class: `etiqueta ${c.status}`, text: rotulo('status', c.status) })),
+        el('p', {},
+          el('span', { class: `etiqueta tipo-${c.tipo_ficha}`, text: tipoPorValor(c.tipo_ficha).rotulo }), ' ',
+          el('span', { class: `etiqueta ${c.status}`, text: rotulo('status', c.status) })),
         el('div', { class: 'ficha-meta' },
           el('span', { text: `Protocolo: ${c.protocolo}` }),
           el('span', { text: `CPF: ${mascaraCPF(c.cpf)}` }),
@@ -178,6 +180,10 @@ function editar(ctx, c, congregacoes, fotoUrl) {
     }
     form.append(el('section', { class: 'card secao' }, el('h2', { text: e.titulo }), grade));
   }
+
+  // Tipo de ficha (a secretaria pode corrigir se a pessoa escolheu o tipo errado)
+  form.append(el('section', { class: 'card secao' }, el('h2', { text: 'Tipo de ficha' }),
+    el('div', { class: 'grade' }, criarCampo(CAMPOS.find((x) => x.nome === 'tipo_ficha'), { valor: c.tipo_ficha || 'CADASTRO', prefixo: 'ed' }))));
 
   // Status
   form.append(el('section', { class: 'card secao' }, el('h2', { text: 'Situação do cadastro' }),

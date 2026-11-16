@@ -7,7 +7,7 @@
 | Operação | Cadastro digital de membros (Ficha de Cadastro Setorial) |
 | Titulares | Membros e obreiros; cônjuges e pais (dados de terceiros); menores de idade (via responsável) |
 | Categorias de dados | Identificação (nome, CPF, RG, nascimento, filiação, foto), contato (endereço, telefones, e-mail), socioeconômicos (escolaridade, profissão), **sensíveis**: convicção religiosa (origem, batismo, admissão, cargo, congregação) |
-| Finalidades | Controle interno de membros; atualização de dados; organização das congregações; registro de obreiros |
+| Finalidades | Controle interno de membros; atualização de dados; organização das congregações; registro de obreiros; encaminhamento de pedidos de batismo e de credencial (tipo de ficha escolhido pelo titular) |
 | Base legal | Art. 11, I (consentimento específico e destacado); art. 14 para menores; guarda mínima: PENDENTE (C3) |
 | Coleta | Formulário web via QR Code, sem conta de usuário |
 | Acesso | Administrador geral (*admin*) e secretários autorizados (*secretaria*), com login individual e CAPTCHA; uso exclusivo da igreja, sem compartilhamento |

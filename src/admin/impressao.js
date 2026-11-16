@@ -4,7 +4,7 @@
 import { caminho } from '../ui/caminho.js';
 import { el, dataHora } from './util.js';
 import {
-  CAMPOS, OPCOES, formatarValor, formatarData, rotulo,
+  CAMPOS, OPCOES, formatarValor, formatarData, rotulo, tipoPorValor,
 } from '../shared/campos.js';
 import { sb } from './supabase.js';
 
@@ -84,7 +84,8 @@ export async function imprimirFicha(c, congregacoes, fotoBlob) {
           el('div', { class: 'f-t1', text: 'Igreja Evangélica Assembléia de Deus - Minst. Belém - Setor 46' }),
           el('div', { class: 'f-t2', text: cfg.endereco_sede || 'Rua Independência, 179 -Centro - Embu Guaçu - SP' }),
           el('div', { class: 'f-t3', text: `Pr. Setorial - ${cfg.pastor_setorial || 'Pr. Luiz Amaral'}` }),
-          el('div', { class: 'f-titulo', text: 'FICHA DE CADASTRO SETORIAL' })),
+          el('div', { class: 'f-titulo', text: 'FICHA DE CADASTRO SETORIAL' }),
+          el('div', { class: 'f-tipo', text: `Finalidade: ${tipoPorValor(c.tipo_ficha).rotulo}` })),
         el('div', { class: 'f-foto' }, fotoUrl
           ? el('img', { src: fotoUrl, alt: '' })
           : el('span', { class: 'f-foto-txt' }, '02', el('br'), 'FOTOS', el('br'), '3X4'))),
@@ -129,10 +130,10 @@ export async function imprimirFicha(c, congregacoes, fotoBlob) {
   if (fotoUrl) setTimeout(() => URL.revokeObjectURL(fotoUrl), 60000);
 }
 
-export async function imprimirCartazQR(qrDataUrl, url) {
+export async function imprimirCartazQR(qrDataUrl, url, titulo = 'Ficha de Cadastro Setorial') {
   const doc = el('div', { class: 'qr-cartaz' },
     el('div', { class: 'pf-logo' }, el('img', { src: LOGO, alt: 'Assembleia de Deus – Ministério do Belém – Setor 46' })),
-    el('h1', { text: 'Ficha de Cadastro Setorial' }),
+    el('h1', { text: titulo }),
     el('p', { text: 'Aponte a câmera do celular para o código abaixo e preencha sua ficha.' }),
     el('img', { class: 'qr', src: qrDataUrl, alt: 'QR Code do formulário' }),
     el('div', { class: 'url', text: url }));

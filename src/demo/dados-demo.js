@@ -2,7 +2,7 @@
 // Dados fictícios guardados apenas no navegador de quem está visualizando.
 // Este módulo NÃO entra no build de produção.
 
-const CHAVE = 'demo-setor46-v2';
+const CHAVE = 'demo-setor46-v3';
 
 // Equivalente ao gatilho do banco: nome em minúsculas e sem acentos para a busca
 export const nomeBusca = (n) => String(n ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -56,6 +56,7 @@ function semente() {
     return {
       id,
       protocolo: `S46-DEMO-${String(i + 1).padStart(6, '0')}`,
+      tipo_ficha: ['CADASTRO', 'CADASTRO', 'BATISMO', 'CREDENCIAL', 'CADASTRO', 'BATISMO', 'CADASTRO', 'CREDENCIAL'][i],
       status,
       congregacao_id: cong,
       nome,

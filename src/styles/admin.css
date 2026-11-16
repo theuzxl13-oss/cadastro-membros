@@ -122,3 +122,11 @@ table.tabela { width: 100%; border-collapse: collapse; font-size: .92rem; }
 
 #impressao { display: none; }
 .turnstile { margin: 10px 0; }
+
+.menu-grupo { color: #8a8a8a; font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; padding: 10px 12px 2px; }
+.menu a.sub { padding-left: 20px; font-size: .95rem; }
+.etiqueta.tipo-CADASTRO { background: #eef2f8; color: #1f4e8c; border: 1px solid #c5d3ea; }
+.etiqueta.tipo-BATISMO { background: #e7f4f8; color: #0f5e74; border: 1px solid #b3dbe6; }
+.etiqueta.tipo-CREDENCIAL { background: #f6efe0; color: #7d621c; border: 1px solid #e3cf9b; }
+.indicadores-tipo { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.indicadores-tipo .indicador { border-top-color: var(--blue); }

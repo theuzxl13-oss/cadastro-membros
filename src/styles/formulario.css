@@ -68,3 +68,21 @@
 .tabela-politica th, .tabela-politica td { border: 1px solid var(--line); padding: 8px; text-align: left; vertical-align: top; }
 .tabela-politica th { background: #faf8f2; }
 .rodape a { color: var(--muted); }
+
+/* Tela "Selecione a ficha" */
+.escolha h2 { text-align: center; font-size: 1.25rem; }
+.escolha .dica-bloco { text-align: center; }
+.escolha-botoes { display: grid; gap: 12px; margin-top: 14px; }
+.escolha-btn {
+  display: flex; align-items: center; gap: 14px; width: 100%; text-align: left;
+  background: #fff; border: 2px solid var(--line); border-left: 6px solid var(--gold); border-radius: 12px;
+  padding: 18px 16px; cursor: pointer; font: inherit; color: var(--ink); box-shadow: var(--shadow); min-height: 84px;
+}
+.escolha-btn:hover, .escolha-btn:focus-visible { border-color: var(--ink); border-left-color: var(--gold); }
+.escolha-btn .ic { font-size: 30px; flex: 0 0 auto; width: 44px; text-align: center; }
+.escolha-btn strong { display: block; font-size: 1.12rem; }
+.escolha-btn span.d { color: var(--muted); font-size: .9rem; }
+.escolha-btn .seta { margin-left: auto; font-size: 22px; color: var(--gold-text); }
+.tipo-atual { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;
+  background: var(--gold-bg); border: 1px solid #dccb94; border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; font-size: .92rem; }
+.sucesso-tipo { font-weight: 700; color: var(--gold-text); }

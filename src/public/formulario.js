@@ -2,6 +2,7 @@ import '../styles/base.css';
 import '../styles/formulario.css';
 import {
   CAMPOS, ETAPAS, validarCadastro, formatarValor, soDigitos, menorDeIdade, UFS,
+  TIPOS_FICHA, tipoPorSlug, tipoPorValor,
 } from '../shared/campos.js';
 import {
   el, criarCampo, lerValores, aplicarRegras, mostrarErros,
@@ -58,13 +59,53 @@ async function iniciar() {
   montarCampos();
   montarPassos();
   montarFoto();
-  form.hidden = false;
-  mostrarEtapa(1);
+  montarEscolha();
+  const inicial = tipoPorSlug(new URLSearchParams(location.search).get('ficha'));
+  if (inicial) selecionarTipo(inicial); else mostrarEscolha();
   if (config.turnstile_site_key) carregarTurnstile();
 }
 
+// ---------------------------------------------------------------------------
+// Tela "Selecione a ficha" (mesma ficha, finalidades diferentes)
+// ---------------------------------------------------------------------------
+const ICONES = { CADASTRO: '📝', BATISMO: '💧', CREDENCIAL: '🪪' };
+
+function montarEscolha() {
+  $('#escolha-botoes').replaceChildren(...TIPOS_FICHA.map((t) => el('button', {
+    type: 'button',
+    class: 'escolha-btn',
+    dataset: { tipo: t.valor },
+    onclick: () => selecionarTipo(t),
+  },
+  el('span', { class: 'ic', 'aria-hidden': 'true', text: ICONES[t.valor] }),
+  el('span', {}, el('strong', { text: t.rotulo }), el('span', { class: 'd', text: t.descricao })),
+  el('span', { class: 'seta', 'aria-hidden': 'true', text: '›' }))));
+}
+
+function mostrarEscolha() {
+  form.hidden = true;
+  $('#escolha').hidden = false;
+  $('#titulo-pagina').textContent = 'Ficha de Cadastro Setorial';
+  history.replaceState(null, '', location.pathname);
+  window.scrollTo({ top: 0 });
+}
+
+function selecionarTipo(t) {
+  $('#tipo_ficha').value = t.valor;
+  $('#tipo-atual-rotulo').textContent = t.rotulo;
+  $('#titulo-pagina').textContent = t.titulo;
+  document.title = `${t.titulo} – AD Belém Setor 46`;
+  $('#escolha').hidden = true;
+  form.hidden = false;
+  history.replaceState(null, '', `${location.pathname}?ficha=${t.slug}`);
+  mostrarEtapa(1);
+}
+
+$('#btn-trocar-tipo').addEventListener('click', mostrarEscolha);
+
 function montarCampos() {
   for (const c of CAMPOS) {
+    if (c.etapa === 0) continue; // tipo de ficha: escolhido na tela inicial
     const alvo = form.querySelector(`[data-campos="${c.etapa}"]`);
     alvo.append(criarCampo(c, { congregacoes: config.congregacoes, prefixo: 'f' }));
   }
@@ -218,7 +259,9 @@ async function montarRevisao() {
   const dados = lerValores(form);
   const { dados: limpos } = validarCadastro(dados);
   const raiz = $('#revisao');
-  raiz.replaceChildren();
+  raiz.replaceChildren(el('div', { class: 'rev-bloco' },
+    el('header', {}, el('span', { text: 'Tipo de ficha' }), el('button', { type: 'button', class: 'btn link', text: 'Trocar', onclick: mostrarEscolha })),
+    el('dl', {}, el('dt', { text: 'Ficha' }), el('dd', { text: tipoPorValor(limpos.tipo_ficha).rotulo }))));
   for (const e of ETAPAS.slice(0, 4)) {
     const dl = el('dl');
     for (const c of CAMPOS.filter((x) => x.etapa === e.n)) {
@@ -332,6 +375,7 @@ form.addEventListener('submit', async (ev) => {
     alterado = false;
     form.hidden = true;
     $('#protocolo').textContent = j.protocolo || '';
+    $('#sucesso-tipo').textContent = tipoPorValor(dados.tipo_ficha).rotulo;
     $('#sucesso').hidden = false;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } catch (e) {
@@ -347,7 +391,7 @@ form.addEventListener('submit', async (ev) => {
   }
 });
 
-$('#btn-nova').addEventListener('click', () => { location.reload(); });
+$('#btn-nova').addEventListener('click', () => { location.href = location.pathname; });
 
 window.addEventListener('beforeunload', (e) => {
   if (alterado) { e.preventDefault(); e.returnValue = ''; }

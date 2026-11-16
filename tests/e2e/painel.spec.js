@@ -77,7 +77,7 @@ test('usuário sem papel de administrador é barrado no login', async ({ page })
 
 test('dashboard, menu completo e filtros por nome, CPF, congregação, cargo, status e período', async ({ page }) => {
   await entrar(page);
-  for (const item of ['Dashboard', 'Todos os cadastros', 'Pendentes', 'Aprovados', 'Congregações', 'QR Code', 'Exportação', 'Configurações', 'Sair']) {
+  for (const item of ['Dashboard', 'Todas as fichas', 'Fichas de Cadastro', 'Fichas de Batismo', 'Solicitações de Credencial', 'Pendentes', 'Aprovados', 'Congregações', 'QR Code', 'Exportação', 'Configurações', 'Sair']) {
     await expect(page.locator('.menu')).toContainText(item);
   }
   const total = await svc('/rest/v1/cadastros?select=id');
@@ -108,7 +108,7 @@ test('dashboard, menu completo e filtros por nome, CPF, congregação, cargo, st
   await expect(page.locator('.vazio')).toContainText('Nenhum cadastro');
 
   await page.click('a[data-rota=aprovados]');
-  await expect(page.locator('h1')).toHaveText('Cadastros aprovados');
+  await expect(page.locator('h1')).toHaveText('Fichas aprovadas');
   await expect(page.locator('#fl-status')).toHaveCount(0);
 });
 
@@ -116,7 +116,7 @@ test('ficha completa com foto, edição de dados e substituição da foto', asyn
   await entrar(page);
   await page.goto(`/admin/painel.html#/cadastro/${fichaA.id}`);
   await expect(page.locator('.ficha-info h1')).toHaveText(`Painel Alfa ${sufixo}`);
-  await expect(page.locator('.ficha-info .etiqueta')).toHaveText('Pendente');
+  await expect(page.locator('.ficha-info .etiqueta:not([class*="tipo-"])')).toHaveText('Pendente');
   const img = page.locator('.ficha-foto img');
   await expect(img).toBeVisible();
   expect(await img.evaluate((i) => i.naturalWidth)).toBe(600);
@@ -149,16 +149,16 @@ test('aprovar e voltar para pendente', async ({ page }) => {
   await entrar(page);
   await page.goto(`/admin/painel.html#/cadastro/${fichaA.id}`);
   await page.click('button:has-text("Aprovar cadastro")');
-  await expect(page.locator('.ficha-info .etiqueta')).toHaveText('Aprovado');
+  await expect(page.locator('.ficha-info .etiqueta:not([class*="tipo-"])')).toHaveText('Aprovado');
   let c = await cadastroPorProtocolo(fichaA.protocolo);
   expect(c.status).toBe('APROVADO');
   expect(c.aprovado_em).toBeTruthy();
   await page.click('button:has-text("Voltar para pendente")');
-  await expect(page.locator('.ficha-info .etiqueta')).toHaveText('Pendente');
+  await expect(page.locator('.ficha-info .etiqueta:not([class*="tipo-"])')).toHaveText('Pendente');
   c = await cadastroPorProtocolo(fichaA.protocolo);
   expect(c.status).toBe('PENDENTE');
   await page.click('button:has-text("Aprovar cadastro")');
-  await expect(page.locator('.ficha-info .etiqueta')).toHaveText('Aprovado');
+  await expect(page.locator('.ficha-info .etiqueta:not([class*="tipo-"])')).toHaveText('Aprovado');
 });
 
 test('impressão A4 com logo, campos e foto', async ({ page }) => {
@@ -397,4 +397,42 @@ test('baixar foto 3x4: arquivo JPEG com o protocolo no nome e registro na audito
   await expect.poll(async () => (await svc(`/rest/v1/auditoria?select=acao,detalhes&acao=eq.download_foto&entidade_id=eq.${fichaA.id}`)).length).toBeGreaterThan(0);
   const aud = await svc(`/rest/v1/auditoria?select=detalhes&acao=eq.download_foto&entidade_id=eq.${fichaA.id}`);
   expect(JSON.stringify(aud)).not.toContain(fichaA.nome);
+});
+
+test('seções por tipo de ficha: listas separadas, contagem no dashboard, alteração de tipo e impressão', async ({ page }) => {
+  const r = await enviarFicha(DADOS_VALIDOS(congregacaoId, { nome: `Tipo Batismo ${sufixo}`, tipo_ficha: 'BATISMO' }));
+  expect(r.status).toBe(201);
+  const b = await cadastroPorProtocolo(r.json.protocolo);
+  expect(b.tipo_ficha).toBe('BATISMO');
+  await entrar(page);
+  await expect(page.locator('.indicadores-tipo')).toContainText('Ficha de Batismo');
+
+  await page.click('a[data-rota="fichas/batismo"]');
+  await expect(page.locator('h1')).toHaveText('Fichas de Batismo');
+  await expect(page.locator('#fl-tipo')).toHaveCount(0);
+  await expect(page.locator('table.tabela tbody')).toContainText(`Tipo Batismo ${sufixo}`);
+  await expect(page.locator('table.tabela tbody')).not.toContainText(`Painel Alfa ${sufixo}`);
+
+  await page.click('a[data-rota="fichas/cadastro"]');
+  await expect(page.locator('h1')).toHaveText('Fichas de Cadastro');
+  await expect(page.locator('#view')).not.toContainText(`Tipo Batismo ${sufixo}`);
+
+  // Na ficha: etiqueta do tipo; a secretaria pode corrigir o tipo
+  await page.goto(`/admin/painel.html#/cadastro/${b.id}`);
+  await expect(page.locator('.ficha-info')).toContainText('Ficha de Batismo');
+  await page.addInitScript(() => {});
+  await page.click('text=Editar dados');
+  await page.selectOption('#ed-tipo_ficha', 'CREDENCIAL');
+  await page.click('button:has-text("Salvar alterações")');
+  await expect(page.locator('.ficha-info')).toContainText('Solicitação de Credencial');
+  expect((await cadastroPorProtocolo(b.protocolo)).tipo_ficha).toBe('CREDENCIAL');
+
+  // Impressão mostra a finalidade no cabeçalho
+  await page.evaluate(() => { window.print = () => { window.__tipo = document.getElementById('impressao').innerText; }; });
+  await page.click('button:has-text("Imprimir ficha")');
+  await page.waitForFunction(() => window.__tipo);
+  expect(await page.evaluate(() => window.__tipo)).toContain('Finalidade: Solicitação de Credencial');
+
+  await fetch('http://127.0.0.1:54321/storage/v1/object/fotos-cadastros', { method: 'DELETE', headers: { apikey: SECRET, 'Content-Type': 'application/json' }, body: JSON.stringify({ prefixes: [b.foto_path] }) });
+  await svc(`/rest/v1/cadastros?id=eq.${b.id}`, { method: 'DELETE' });
 });

@@ -19,6 +19,11 @@ test.afterAll(async () => {
 });
 
 async function avancar(page) { await page.click('#btn-avancar'); }
+async function abrirFicha(page, tipo = 'CADASTRO') {
+  await page.goto('/');
+  await page.click(`.escolha-btn[data-tipo=${tipo}]`);
+  await expect(page.locator('#ficha')).toBeVisible();
+}
 // O backend recusa fichas preenchidas em menos de 5 s (anti-robô); o teste respeita isso.
 async function aguardarTempoMinimo(page) {
   const decorrido = await page.evaluate(() => performance.now());
@@ -31,6 +36,15 @@ test('logo oficial, título e etapas aparecem; sem rolagem horizontal', async ({
   const img = page.locator('header.topo img.logo');
   const proporcao = await img.evaluate((i) => (i.clientWidth / i.clientHeight) / (i.naturalWidth / i.naturalHeight));
   expect(Math.abs(proporcao - 1)).toBeLessThan(0.02); // logo não distorcida
+  // Tela inicial: "Selecione a ficha" com os três tipos
+  await expect(page.locator('#escolha')).toBeVisible();
+  await expect(page.locator('#escolha h2')).toHaveText('Selecione a ficha');
+  await expect(page.locator('.escolha-btn')).toHaveCount(3);
+  await expect(page.locator('#escolha')).toContainText('Ficha de Cadastro');
+  await expect(page.locator('#escolha')).toContainText('Ficha de Batismo');
+  await expect(page.locator('#escolha')).toContainText('Solicitação de Credencial');
+  await expect(page.locator('#ficha')).toBeHidden();
+  await page.click('.escolha-btn[data-tipo=CADASTRO]');
   await expect(page.locator('#ficha')).toBeVisible();
   await expect(page.locator('#prog-etapa')).toHaveText('Etapa 1 de 6');
   await expect(page.locator(`select[name=congregacao_id] option[value="${congregacaoId}"]`)).toHaveCount(1);
@@ -39,7 +53,7 @@ test('logo oficial, título e etapas aparecem; sem rolagem horizontal', async ({
 });
 
 test('validações, máscaras e campos condicionais', async ({ page }) => {
-  await page.goto('/');
+  await abrirFicha(page);
   await avancar(page);
   await expect(page.locator('.campo[data-campo=nome] .erro-msg')).toHaveText('Campo obrigatório.');
   await expect(page.locator('#prog-etapa')).toHaveText('Etapa 1 de 6');
@@ -82,7 +96,7 @@ test('validações, máscaras e campos condicionais', async ({ page }) => {
 });
 
 test('preenchimento completo no celular com foto, revisão e envio', async ({ page }) => {
-  await page.goto('/');
+  await abrirFicha(page);
   await page.selectOption('[name=congregacao_id]', String(congregacaoId));
   await page.fill('[name=nome]', 'João Completo E2E');
   await page.fill('[name=data_nascimento]', '1980-07-15');
@@ -173,7 +187,7 @@ test('preenchimento completo no celular com foto, revisão e envio', async ({ pa
 });
 
 test('menor de idade exige consentimento do responsável', async ({ page }) => {
-  await page.goto('/');
+  await abrirFicha(page);
   await page.selectOption('[name=congregacao_id]', String(congregacaoId));
   await page.fill('[name=nome]', 'Criança Teste E2E');
   await page.fill('[name=data_nascimento]', '2014-03-03');
@@ -214,4 +228,47 @@ test('formulário fechado nas configurações bloqueia novos envios', async ({ p
   } finally {
     await svc('/rest/v1/configuracoes?id=eq.1', { method: 'PATCH', body: { formulario_aberto: true } });
   }
+});
+
+test('tipos de ficha: batismo pela tela de escolha, link direto de credencial e troca de tipo', async ({ page }) => {
+  await abrirFicha(page, 'BATISMO');
+  await expect(page.locator('#titulo-pagina')).toHaveText('Ficha de Batismo');
+  await expect(page.locator('#tipo-atual-rotulo')).toHaveText('Ficha de Batismo');
+  await expect(page).toHaveURL(/\?ficha=batismo$/);
+  await page.selectOption('[name=congregacao_id]', String(congregacaoId));
+  await page.fill('[name=nome]', 'Batismo Teste E2E');
+  await page.fill('[name=data_nascimento]', '1995-06-06');
+  await page.selectOption('[name=estado_civil]', 'SOLTEIRO');
+  await avancar(page);
+  await page.fill('[name=cpf]', '529.982.247-25');
+  await avancar(page);
+  await page.fill('[name=cep]', '06900-000');
+  await page.fill('[name=endereco]', 'Rua A');
+  await page.fill('[name=numero]', '1');
+  await page.fill('[name=bairro]', 'Centro');
+  await page.fill('[name=cidade]', 'Embu-Guaçu');
+  await page.selectOption('[name=estado]', 'SP');
+  await page.fill('[name=celular]', '(11) 91234-5678');
+  await avancar(page);
+  await avancar(page);
+  await page.setInputFiles('#foto-arquivo', FOTO);
+  await avancar(page);
+  await expect(page.locator('#revisao')).toContainText('Ficha de Batismo');
+  await page.check('#consentimento');
+  await aguardarTempoMinimo(page);
+  await page.click('#btn-enviar');
+  await expect(page.locator('#sucesso')).toBeVisible({ timeout: 15000 });
+  await expect(page.locator('#sucesso-tipo')).toHaveText('Ficha de Batismo');
+  const c = await cadastroPorProtocolo((await page.textContent('#protocolo')).trim());
+  criados.push(c);
+  expect(c.tipo_ficha).toBe('BATISMO');
+
+  // Link direto (QR Code específico) abre a ficha já no tipo certo
+  await page.goto('/?ficha=credencial');
+  await expect(page.locator('#ficha')).toBeVisible();
+  await expect(page.locator('#titulo-pagina')).toHaveText('Solicitação de Credencial');
+  // "Trocar" volta para a tela de escolha
+  await page.click('#btn-trocar-tipo');
+  await expect(page.locator('#escolha')).toBeVisible();
+  await expect(page.locator('#ficha')).toBeHidden();
 });

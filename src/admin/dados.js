@@ -15,8 +15,9 @@ export async function listarCongregacoes(forcar = false) {
 export function limparCacheCongregacoes() { cacheCongregacoes = null; }
 
 /** Filtros aceitos: q, congregacao, cargo, status, de, ate */
-export function lerFiltros(query, statusFixo = null) {
+export function lerFiltros(query, statusFixo = null, tipoFixo = null) {
   return {
+    tipo: tipoFixo || query.get('tipo') || '',
     q: query.get('q') || '',
     congregacao: query.get('congregacao') || '',
     cargo: query.get('cargo') || '',
@@ -53,6 +54,7 @@ export function aplicarFiltros(consulta, f) {
       if (n) c = c.ilike('nome_busca', `%${n.replace(/ /g, '%')}%`);
     }
   }
+  if (f.tipo && OPCOES.tipo_ficha.some(([v]) => v === f.tipo)) c = c.eq('tipo_ficha', f.tipo);
   if (f.congregacao) c = c.eq('congregacao_id', Number(f.congregacao));
   if (f.cargo && OPCOES.cargo.some(([v]) => v === f.cargo)) c = c.eq('cargo', f.cargo);
   if (f.status === 'PENDENTE' || f.status === 'APROVADO') c = c.eq('status', f.status);
@@ -70,7 +72,9 @@ export async function blobFoto(caminho) {
 }
 
 /** Monta os controles de filtro (busca, congregação, cargo, status, período). */
-export function controlesFiltro(f, congregacoes, { statusFixo = false, aoAplicar, extraAcoes = [] }) {
+export function controlesFiltro(f, congregacoes, {
+  statusFixo = false, tipoFixo = false, aoAplicar, extraAcoes = [],
+}) {
   const sel = (nome, rot, opcoes, valor) => el('div', { class: 'campo' },
     el('label', { for: `fl-${nome}`, text: rot }),
     el('select', { id: `fl-${nome}`, name: nome },
@@ -80,6 +84,7 @@ export function controlesFiltro(f, congregacoes, { statusFixo = false, aoAplicar
     el('div', { class: 'campo' },
       el('label', { for: 'fl-q', text: 'Buscar por nome, CPF ou protocolo' }),
       el('input', { type: 'search', id: 'fl-q', name: 'q', value: f.q, placeholder: 'Ex.: Maria ou 123.456', autocomplete: 'off' })),
+    tipoFixo ? null : sel('tipo', 'Tipo de ficha', OPCOES.tipo_ficha, f.tipo),
     sel('congregacao', 'Congregação', congregacoes.map((c) => [String(c.id), c.ativa ? c.nome : `${c.nome} (inativa)`]), f.congregacao),
     sel('cargo', 'Cargo', OPCOES.cargo, f.cargo),
     statusFixo ? null : sel('status', 'Status', OPCOES.status, f.status),
@@ -87,13 +92,14 @@ export function controlesFiltro(f, congregacoes, { statusFixo = false, aoAplicar
     el('div', { class: 'campo' }, el('label', { for: 'fl-ate', text: 'até' }), el('input', { type: 'date', id: 'fl-ate', name: 'ate', value: f.ate })),
     el('div', { class: 'acoes' },
       el('button', { type: 'submit', class: 'btn', text: 'Filtrar' }),
-      el('button', { type: 'button', class: 'btn sec', text: 'Limpar', onclick: () => aoAplicar({ q: '', congregacao: '', cargo: '', status: '', de: '', ate: '' }) }),
+      el('button', { type: 'button', class: 'btn sec', text: 'Limpar', onclick: () => aoAplicar({ q: '', tipo: '', congregacao: '', cargo: '', status: '', de: '', ate: '' }) }),
       ...extraAcoes));
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const fd = new FormData(form);
     aoAplicar({
       q: String(fd.get('q') || ''),
+      tipo: tipoFixo ? '' : String(fd.get('tipo') || ''),
       congregacao: String(fd.get('congregacao') || ''),
       cargo: String(fd.get('cargo') || ''),
       status: statusFixo ? '' : String(fd.get('status') || ''),
