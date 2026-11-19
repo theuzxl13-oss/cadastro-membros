@@ -7,7 +7,7 @@ import {
 import {
   el, criarCampo, lerValores, aplicarRegras, mostrarErros,
 } from '../ui/campos-dom.js';
-import { criarRecorte } from '../ui/foto3x4.js';
+import { criarRecorte, avisosDaFoto } from '../ui/foto3x4.js';
 import { obterConfig, enviarFicha } from './api.js';
 
 if (__DEMO__) import('../demo/faixa-demo.js').then((m) => m.ativarFaixaDemo());
@@ -167,12 +167,22 @@ function camposDaEtapa(n) {
 
 function validarEtapa(n) {
   if (n === 5) {
-    const ok = recorte?.temFoto();
+    const tem = recorte?.temFoto();
     const msg = $('#foto-erro');
-    msg.hidden = ok;
-    msg.textContent = ok ? '' : 'Envie a foto 3x4 para continuar.';
-    if (!ok) $('#foto-escolher').focus();
-    return ok;
+    if (!tem) {
+      msg.textContent = 'Envie a foto 3x4 para continuar.';
+      msg.hidden = false;
+      $('#foto-escolher').focus();
+      return false;
+    }
+    if (!$('#foto-confirma').checked) {
+      msg.textContent = 'Confira a foto e marque a confirmação de que ela segue o padrão de documento.';
+      msg.hidden = false;
+      $('#foto-confirma').focus();
+      return false;
+    }
+    msg.hidden = true;
+    return true;
   }
   if (n > 4) return true;
   const campos = camposDaEtapa(n);
@@ -233,8 +243,14 @@ function montarFoto() {
       $('#foto-ajuste').hidden = !tem;
       quadro.classList.toggle('com-foto', !!tem);
       $('#foto-escolher').textContent = tem ? 'Trocar foto' : 'Escolher ou tirar foto';
+      $('#foto-guia').toggleAttribute('hidden', !tem); // SVG não tem a propriedade .hidden
+      $('#bloco-foto-confirma').hidden = !tem;
+      $('#foto-confirma').checked = false; // foto nova: precisa confirmar de novo
+      conferirFoto();
     },
+    aoAjustar: () => conferirFoto(),
   });
+  $('#foto-confirma').addEventListener('change', () => { if ($('#foto-confirma').checked) $('#foto-erro').hidden = true; });
   $('#foto-arquivo').addEventListener('change', async (e) => {
     const arq = e.target.files?.[0];
     e.target.value = '';
@@ -250,6 +266,26 @@ function montarFoto() {
     }
   });
   $('#foto-remover').addEventListener('click', () => recorte.limpar());
+}
+
+// Avisos automáticos sobre a foto (fundo, luz, resolução). Não bloqueiam.
+function conferirFoto() {
+  const caixa = $('#foto-avisos');
+  if (!recorte?.temFoto()) { caixa.hidden = true; return; }
+  let avisos = [];
+  try { avisos = avisosDaFoto($('#foto-canvas'), recorte.dimensoes()); } catch { avisos = []; }
+  if (!avisos.length) {
+    caixa.className = 'foto-avisos alerta ok';
+    caixa.replaceChildren(el('strong', { text: 'A foto parece adequada.' }), ' Confira se o rosto está dentro do contorno e se a roupa e o fundo estão no padrão.');
+  } else {
+    caixa.className = 'foto-avisos alerta erro';
+    caixa.replaceChildren(
+      el('strong', { text: 'Atenção: a foto pode não estar no padrão de documento.' }),
+      el('ul', {}, avisos.map((a) => el('li', { text: a }))),
+      'Recomendamos tirar outra foto. Fichas com foto fora do padrão podem ser devolvidas pela secretaria.',
+    );
+  }
+  caixa.hidden = false;
 }
 
 // ---------------------------------------------------------------------------

@@ -153,6 +153,11 @@ test('preenchimento completo no celular com foto, revisão e envio', async ({ pa
   await expect(page.locator('#foto-canvas')).toBeHidden();
   await page.setInputFiles('#foto-arquivo', FOTO);
   await expect(page.locator('#foto-escolher')).toHaveText('Trocar foto');
+  // sem a confirmação do padrão da foto, não avança
+  await avancar(page);
+  await expect(page.locator('#foto-erro')).toContainText('marque a confirmação');
+  await expect(page.locator('#prog-etapa')).toHaveText('Etapa 5 de 6');
+  await page.check('#foto-confirma');
   await page.locator('#foto-zoom').fill('1.4');
   await avancar(page);
 
@@ -205,6 +210,7 @@ test('menor de idade exige consentimento do responsável', async ({ page }) => {
   await avancar(page);
   await avancar(page);
   await page.setInputFiles('#foto-arquivo', FOTO);
+  await page.check('#foto-confirma');
   await avancar(page);
   await expect(page.locator('#bloco-responsavel')).toBeVisible();
   await page.check('#consentimento');
@@ -252,6 +258,7 @@ test('tipos de ficha: batismo pela tela de escolha, link direto de credencial e 
   await avancar(page);
   await avancar(page);
   await page.setInputFiles('#foto-arquivo', FOTO);
+  await page.check('#foto-confirma');
   await avancar(page);
   await expect(page.locator('#revisao')).toContainText('Ficha de Batismo');
   await page.check('#consentimento');
@@ -271,4 +278,31 @@ test('tipos de ficha: batismo pela tela de escolha, link direto de credencial e 
   await page.click('#btn-trocar-tipo');
   await expect(page.locator('#escolha')).toBeVisible();
   await expect(page.locator('#ficha')).toBeHidden();
+});
+
+test('foto: orientações, moldura-guia, avisos automáticos e confirmação obrigatória', async ({ page }) => {
+  await abrirFicha(page);
+  // vai direto para a etapa da foto (as etapas anteriores são testadas em outros testes)
+  await page.evaluate(() => { document.querySelectorAll('.etapa').forEach((s) => { s.hidden = s.dataset.etapa !== '5'; }); });
+  await expect(page.locator('.foto-regras')).toContainText('Fundo branco');
+  await expect(page.locator('.foto-exemplos figure')).toHaveCount(4);
+
+  const pasta = fileURLToPath(new URL('../fixtures/', import.meta.url));
+  const carregar = async (arquivo) => {
+    if (await page.isVisible('#foto-remover')) await page.click('#foto-remover');
+    await expect(page.locator('#foto-avisos')).toBeHidden();
+    await page.setInputFiles('#foto-arquivo', pasta + arquivo);
+    await expect(page.locator('#foto-avisos')).toBeVisible();
+    return (await page.textContent('#foto-avisos')).replace(/\s+/g, ' ');
+  };
+  expect(await carregar('foto-boa.jpg')).toContain('parece adequada');
+  await expect(page.locator('#foto-guia')).toBeVisible();
+  expect(await carregar('foto-fundo-escuro.jpg')).toContain('fundo parece escuro');
+  expect(await carregar('foto-fundo-baguncado.jpg')).toContain('não parece liso');
+  expect(await carregar('foto-escura.jpg')).toContain('foto está escura');
+
+  // Foto nova exige confirmar de novo
+  await page.check('#foto-confirma');
+  await carregar('foto-boa.jpg');
+  await expect(page.locator('#foto-confirma')).not.toBeChecked();
 });

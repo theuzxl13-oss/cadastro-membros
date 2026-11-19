@@ -205,8 +205,8 @@ test('exportação CSV e Excel respeitando filtros', async ({ page }) => {
   expect(xlsx.suggestedFilename()).toMatch(/\.xlsx$/);
   const bin = readFileSync(await xlsx.path());
   expect(bin.subarray(0, 2).toString()).toBe('PK'); // arquivo .xlsx (zip)
-  const aud = await svc('/rest/v1/auditoria?select=acao&acao=in.(exportacao_csv,exportacao_excel)');
-  expect(aud.length).toBeGreaterThanOrEqual(2);
+  // o registro na auditoria é gravado logo após o download: aguarda até 5 s
+  await expect.poll(async () => (await svc('/rest/v1/auditoria?select=acao&acao=in.(exportacao_csv,exportacao_excel)')).length).toBeGreaterThanOrEqual(2);
 });
 
 test('congregações: adicionar, editar, desativar e reativar (reflete no formulário público)', async ({ page }) => {

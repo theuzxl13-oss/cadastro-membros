@@ -74,10 +74,30 @@
 
       <section class="card etapa" data-etapa="5" aria-labelledby="t-e5" hidden>
         <h2 id="t-e5">Foto 3x4 <span class="obr">*</span></h2>
-        <p>Use uma foto recente, de frente, com o rosto bem visível e fundo claro. Você pode tirar agora com a câmera ou escolher da galeria.</p>
+        <div class="foto-regras">
+          <h3>A foto precisa ser no padrão de documento</h3>
+          <ul class="regras-ok">
+            <li><strong>Fundo branco</strong> (ou bem claro) e liso — uma parede branca serve</li>
+            <li><strong>De frente</strong>, olhando para a câmera, rosto e ombros aparecendo</li>
+            <li><strong>Bem vestido(a)</strong>: roupa social ou discreta</li>
+            <li>Foto <strong>recente</strong>, nítida e com boa luz (de frente para a janela)</li>
+          </ul>
+          <ul class="regras-nao">
+            <li>Sem boné, chapéu ou óculos escuros</li>
+            <li>Sem filtros, figurinhas ou efeitos</li>
+            <li>Sem outras pessoas, sem selfie de longe ou ao ar livre</li>
+          </ul>
+          <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><pattern id="listras" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="7" height="14" fill="#5a4a3a"/></pattern></defs></svg>
+          <div class="foto-exemplos" aria-label="Exemplos de foto certa e errada (desenhos ilustrativos)"><figure class="foto-ex ok"><svg viewBox="0 0 120 120" role="img" aria-label="Assim: fundo branco, de frente, bem vestido(a)"><rect width="120" height="120" fill="#ffffff"/><g transform="translate(0 0) scale(1)"><path d="M18 120 C20 96 36 86 60 86 C84 86 100 96 102 120Z" fill="#2b3a55"/><path d="M48 86 L60 100 L72 86" fill="#fff"/><path d="M58 98 L60 112 L62 98Z" fill="#7a1e1e"/><ellipse cx="60" cy="56" rx="19" ry="23" fill="#c99a7a"/><path d="M41 50 C42 30 78 30 79 50 C74 40 46 40 41 50Z" fill="#3b2a20"/></g><circle cx="104" cy="16" r="12" fill="#23704a"/><path d="M98 16 l4 4 l8 -9" stroke="#fff" stroke-width="3" fill="none"/></svg><figcaption>Assim: fundo branco, de frente, bem vestido(a)</figcaption></figure><figure class="foto-ex nao"><svg viewBox="0 0 120 120" role="img" aria-label="Fundo escuro ou com objetos"><rect width="120" height="120" fill="#3a3a3a"/><rect x="0" y="0" width="120" height="120" fill="url(#listras)"/><g transform="translate(0 0) scale(1)"><path d="M18 120 C20 96 36 86 60 86 C84 86 100 96 102 120Z" fill="#c0392b"/><ellipse cx="60" cy="56" rx="19" ry="23" fill="#c99a7a"/><path d="M41 50 C42 30 78 30 79 50 C74 40 46 40 41 50Z" fill="#3b2a20"/></g><circle cx="104" cy="16" r="12" fill="#b3261e"/><path d="M99 11 l10 10 M109 11 l-10 10" stroke="#fff" stroke-width="3"/></svg><figcaption>Fundo escuro ou com objetos</figcaption></figure><figure class="foto-ex nao"><svg viewBox="0 0 120 120" role="img" aria-label="Boné, óculos escuros ou filtros"><rect width="120" height="120" fill="#ffffff"/><g transform="translate(0 0) scale(1)"><path d="M18 120 C20 96 36 86 60 86 C84 86 100 96 102 120Z" fill="#2b3a55"/><path d="M48 86 L60 100 L72 86" fill="#fff"/><path d="M58 98 L60 112 L62 98Z" fill="#7a1e1e"/><ellipse cx="60" cy="56" rx="19" ry="23" fill="#c99a7a"/><path d="M38 44 C40 24 80 24 82 44Z" fill="#1f6f3f"/><rect x="34" y="40" width="56" height="6" rx="3" fill="#1f6f3f"/><rect x="44" y="52" width="14" height="8" rx="3" fill="#111"/><rect x="62" y="52" width="14" height="8" rx="3" fill="#111"/><rect x="57" y="55" width="6" height="2" fill="#111"/></g><circle cx="104" cy="16" r="12" fill="#b3261e"/><path d="M99 11 l10 10 M109 11 l-10 10" stroke="#fff" stroke-width="3"/></svg><figcaption>Boné, óculos escuros ou filtros</figcaption></figure><figure class="foto-ex nao"><svg viewBox="0 0 120 120" role="img" aria-label="De longe, com outras pessoas ou ao ar livre"><rect width="120" height="120" fill="#9ec5e8"/><rect y="80" width="120" height="40" fill="#7fb069"/><circle cx="96" cy="70" r="7" fill="#c99a7a"/><path d="M84 100 C85 86 107 86 108 100Z" fill="#e67e22"/><g transform="translate(10 36.0) scale(0.55)"><path d="M18 120 C20 96 36 86 60 86 C84 86 100 96 102 120Z" fill="#e67e22"/><ellipse cx="60" cy="56" rx="19" ry="23" fill="#c99a7a"/><path d="M41 50 C42 30 78 30 79 50 C74 40 46 40 41 50Z" fill="#3b2a20"/></g><circle cx="104" cy="16" r="12" fill="#b3261e"/><path d="M99 11 l10 10 M109 11 l-10 10" stroke="#fff" stroke-width="3"/></svg><figcaption>De longe, com outras pessoas ou ao ar livre</figcaption></figure></div>
+          <p class="dica">Dica: peça para outra pessoa tirar a foto, a um passo de distância, com você em frente a uma parede branca.</p>
+        </div>
         <div class="foto-area">
           <div class="foto-quadro" id="foto-quadro">
             <canvas id="foto-canvas" width="600" height="800" aria-label="Pré-visualização da foto 3x4" hidden></canvas>
+            <svg class="foto-guia" id="foto-guia" viewBox="0 0 300 400" aria-hidden="true" hidden>
+              <ellipse cx="150" cy="160" rx="72" ry="95" />
+              <path d="M30 400 C40 300 95 275 150 275 C205 275 260 300 270 400" />
+            </svg>
             <div class="foto-vazia" id="foto-vazia">
               <svg viewBox="0 0 24 24" width="48" height="48" aria-hidden="true"><path fill="currentColor" d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-3.3 0-8 1.7-8 5v1h16v-1c0-3.3-4.7-5-8-5Z"/></svg>
               <span>3 x 4</span>
@@ -89,12 +109,17 @@
             <div id="foto-ajuste" hidden>
               <label for="foto-zoom" class="rot-peq">Aproximar</label>
               <input type="range" id="foto-zoom" min="1" max="3" step="0.01" value="1">
-              <p class="dica">Arraste a foto para centralizar o rosto.</p>
+              <p class="dica">Arraste a foto para encaixar o <strong>rosto no contorno</strong> e os ombros na linha de baixo.</p>
               <button type="button" class="btn sec peq" id="foto-remover">Remover foto</button>
             </div>
             <p class="erro-msg" id="foto-erro" role="alert" hidden></p>
           </div>
         </div>
+        <div class="foto-avisos alerta info" id="foto-avisos" role="status" hidden></div>
+        <label class="check foto-confirma" id="bloco-foto-confirma" hidden>
+          <input type="checkbox" id="foto-confirma">
+          <span><strong>Confirmo que a foto segue o padrão de documento:</strong> fundo branco, de frente, rosto bem visível e bem vestido(a). <span class="obr">*</span></span>
+        </label>
       </section>
 
       <section class="card etapa" data-etapa="6" aria-labelledby="t-e6" hidden>
